@@ -2,7 +2,7 @@
 using namespace std;
 using namespace GiNaC;
 
-Node::Node() { set_links_null(); }
+Node::Node() {} // set_links_null(); }
 void Node::set_links_null()
 {
 	links.down = nullptr;
@@ -57,10 +57,10 @@ string Node::get_data_str()
 	return acc;
 }
 
-NodeContainer::NodeContainer (cuint size) { initialize(size); }
+NodeContainer::NodeContainer (cunt size) { initialize(size); }
 NodeContainer::~NodeContainer() { delete[] container; }
 
-void NodeContainer::initialize (cuint size)
+void NodeContainer::initialize (cunt size)
 {
 	free_space_remaining = size;
 	container_size = size;
@@ -85,6 +85,7 @@ Node * NodeContainer::reserve_node()
 	} else {
 		startptr = startptr->links.next;
 	}
+	reserved_node->set_links_null();
 	--free_space_remaining;
 	return reserved_node;
 }

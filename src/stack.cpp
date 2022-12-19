@@ -1,8 +1,8 @@
 #include "calc.hpp"
 
-Stack::Stack(cuint size) : min_free_space(size / 10) {container.initialize(size); }
+Stack::Stack(cunt size) : min_free_space(size / 10) {container.initialize(size); }
 
-Node * Stack::get_level_ref(cuint level)
+Node * Stack::get_level_ref(cunt level)
 {
 	if (root_node_list.size() < level) {return nullptr;}
 	return *(root_node_list.end() - level);

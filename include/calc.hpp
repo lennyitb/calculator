@@ -10,7 +10,8 @@
 #include <ginac/ginac.h>
 
 #define ERROR_MSG "error"
-typedef const unsigned int cuint;
+
+typedef const unsigned int cunt;
 
 #include "nodecontainer.hpp"
 #include "stack.hpp"

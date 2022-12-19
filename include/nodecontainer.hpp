@@ -42,9 +42,9 @@ class NodeContainer
 	bool set_cut_card (Node * position);
 public:
 	NodeContainer () {}
-	NodeContainer (cuint size);
+	NodeContainer (cunt size);
 	~NodeContainer();
-	void initialize (cuint size);
+	void initialize (cunt size);
 
 	unsigned int free_space_remaining;
 

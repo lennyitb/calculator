@@ -8,18 +8,20 @@ int main()
 	cout << "this is a debug build." << endl;
 	#endif
 	NodeContainer c{100};
-	Node * n[3];
-	for (unsigned int i = 0; i < 3; ++i)
+	constexpr unsigned int num_nodes = 4;
+	Node * n[num_nodes];
+	for (unsigned int i = 0; i < num_nodes; ++i)
 	{
 		n[i] = c.reserve_node();
 	}
 	n[0]->data.type = TYPE_CMD;
 	n[0]->links.down = n[1];
 	n[1]->data.type = TYPE_NUMERIC;
-	n[1]->links.next = n[2];
+	n[1]->links.next = n[3];
 	n[1]->data.data = new numeric {5,7};
 	n[2]->data.type = TYPE_NUMERIC;
 	n[2]->data.data = new numeric {7,13};
+	*n[3] = *n[2];
 
 	cout << n[0]->get_data_str() << endl;
 

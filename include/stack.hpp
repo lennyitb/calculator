@@ -7,10 +7,10 @@ class Stack
 	std::vector<Node *> root_node_list;
 
 public:
-	Stack(cuint size);
+	Stack(cunt size);
 
 	inline unsigned int depth () { return root_node_list.size(); }
-	Node * get_level_ref (cuint level);
+	Node * get_level_ref (cunt level);
 
 	Node * reserve_node();
 	inline void push_node (Node * node) { root_node_list.push_back(node); }
