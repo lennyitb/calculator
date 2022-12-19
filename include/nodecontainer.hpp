@@ -1,0 +1,4 @@
+#ifndef NODECONTAINER_H
+#define NODECONTAINER_H
+
+#endif
