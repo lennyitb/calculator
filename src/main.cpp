@@ -8,6 +8,7 @@ int main()
 	cout << "this is a debug build." << endl;
 	#endif
 	NodeContainer c{100};
+
 	constexpr unsigned int num_nodes = 4;
 	Node * n[num_nodes];
 	for (unsigned int i = 0; i < num_nodes; ++i)
@@ -23,7 +24,10 @@ int main()
 	n[2]->data.data = new numeric {7,13};
 	*n[3] = *n[2];
 
-	cout << n[0]->get_data_str() << endl;
+	// cout << n[0]->get_data_str() << endl;
+	// ostringstream s;
+	// cout << n[0]->get_data_str(s).str() << endl;
+
 
 	c.delete_all_from_root(n[0]);
 

@@ -9,3 +9,8 @@ Node * Stack::get_level_ref(cunt level)
 }
 
 Node * Stack::reserve_node() { return container.reserve_node(); }
+
+void Stack::record_history()
+{
+	history_table.push_back(root_node_list);
+}

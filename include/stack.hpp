@@ -5,6 +5,7 @@ class Stack
 {
 	NodeContainer container;
 	std::vector<Node *> root_node_list;
+	std::vector<std::vector<Node *>> history_table;	
 
 public:
 	Stack(cunt size);
@@ -16,6 +17,8 @@ public:
 	inline void push_node (Node * node) { root_node_list.push_back(node); }
 
 	unsigned int min_free_space;
+
+	void record_history();
 };
 
 #endif

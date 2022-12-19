@@ -10,7 +10,18 @@ void Node::set_links_null()
 	links.next = nullptr;
 	links.prev = nullptr;
 }
-
+nodeDataType Node::get_type()
+{
+	if (data.deletable) { return TYPE_DELETABLE; }
+	return data.type;
+}
+void Node::set_type(const nodeDataType type)
+{
+	if (type == data.type) { return; }
+	if (type == TYPE_DELETABLE) { data.deletable = true; return; }
+	data.type = type;
+	if (type == TYPE_NUMERIC) { data.data = new numeric; }
+}
 void Node::set_type_all(const nodeDataType type)
 {
 	if (links.down) { links.down->set_type_all(type); }
@@ -23,6 +34,29 @@ void Node::mark_empty_delete_data()
 	data.type = TYPE_EMPTY;
 }
 
+ostringstream & Node::get_this_data_str(ostringstream & s)
+{
+	if (data.type == TYPE_CMD) { s << "plus"; return s; }
+	if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
+	s << ERROR_MSG; return s;
+}
+ostringstream & Node::get_data_str(ostringstream & s)
+{
+	if (data.type < TYPE_NUMERIC) { s << ERROR_MSG; return s; }
+	get_this_data_str(s);
+	if (data.type == TYPE_CMD)
+	{
+		Node * next_op = links.down;
+		s << "("; next_op->get_data_str(s);
+		while(next_op->links.next)
+		{
+			next_op = next_op->links.next;
+			s << ","; next_op->get_data_str(s);
+		}
+		s << ")";
+	}
+	return s;
+}
 string Node::get_this_data_str()
 {
 	ostringstream s;
