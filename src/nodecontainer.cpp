@@ -17,8 +17,13 @@ void Node::set_type_all(const nodeDataType type)
 	if (links.next) { links.next->set_type_all(type); }
 	set_type(type);
 }
+void Node::mark_empty_delete_data()
+{
+	if (data.type == TYPE_NUMERIC) { delete (numeric *) data.data; }
+	data.type = TYPE_EMPTY;
+}
 
-string Node::get_data_str()
+string Node::get_this_data_str()
 {
 	ostringstream s;
 	switch (data.type)
@@ -34,18 +39,18 @@ string Node::get_data_str()
 			return "error";
 	}
 }
-string Node::get_data_str_all()
+string Node::get_data_str()
 {
 	if (data.type < TYPE_NUMERIC) { return ERROR_MSG; }
-	string acc = get_data_str();
+	string acc = get_this_data_str();
 	if (data.type == TYPE_CMD)
 	{
 		Node * next_op = links.down;
-		acc += "(" + next_op->get_data_str_all();
+		acc += "(" + next_op->get_data_str();
 		while(next_op->links.next)
 		{
 			next_op = next_op->links.next;
-			acc += "," + next_op->get_data_str_all();
+			acc += "," + next_op->get_data_str();
 		}
 		acc += ")";
 	}
@@ -82,4 +87,13 @@ Node * NodeContainer::reserve_node()
 	}
 	--free_space_remaining;
 	return reserved_node;
+}
+void NodeContainer::delete_all_from_root(Node * root_node)
+{
+	if(root_node->links.down) { delete_all_from_root(root_node->links.down); }
+	if(root_node->links.next) { delete_all_from_root(root_node->links.next); }
+	root_node->mark_empty_delete_data();
+	root_node->links.next = startptr;
+	startptr = root_node;
+	++free_space_remaining;
 }

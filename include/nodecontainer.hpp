@@ -19,6 +19,8 @@ struct NodeData
 class Node
 {
 	friend class NodeContainer;
+
+	std::string get_this_data_str ();
 public:
 	Node();
 	NodeLinks links;
@@ -27,9 +29,9 @@ public:
 	void set_links_null();
 	inline void set_type (const nodeDataType type) { data.type = type; }
 	void set_type_all (const nodeDataType type);
+	void mark_empty_delete_data();
 
-	std::string get_data_str ();
-	std::string get_data_str_all();
+	std::string get_data_str();
 };
 
 class NodeContainer
@@ -47,6 +49,7 @@ public:
 	unsigned int free_space_remaining;
 
 	Node * reserve_node ();
+	void delete_all_from_root (Node * root_node);
 	// void remove (Node * node);
 	// void remove_all (Node * node);
 };

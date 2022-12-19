@@ -23,10 +23,8 @@ debug: CXXFLAGS += $(DEBUGFLAGS)
 debug: $(OUT)
 release: CXXFLAGS += $(RELEASEFLAGS)
 release: $(OUT)
-cleandebug: clean
-cleandebug: debug
-cleanrelease: clean
-cleanrelease: release
+cleandebug: clean debug
+cleanrelease: clean release
 
 all: $(OUT)
 
