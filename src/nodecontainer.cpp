@@ -1,5 +1,6 @@
 #include "calc.hpp"
 using namespace std;
+using namespace GiNaC;
 
 Node::Node() { set_links_null(); }
 void Node::set_links_null()
@@ -19,13 +20,15 @@ void Node::set_type_all(const nodeDataType type)
 
 string Node::get_data_str()
 {
+	ostringstream s;
 	switch (data.type)
 	{
 		case TYPE_CMD:
 			return "plus";
 			break;
 		case TYPE_NUMERIC:
-			return "2";
+			s << dflt << *(numeric *) data.data;
+			return s.str();
 			break;
 		default:
 			return "error";

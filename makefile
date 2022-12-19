@@ -12,8 +12,8 @@ OUT        = bin
 CC   = g++
 CSTD = c++11
 
-CXXFLAGS =
-LFLAGS   =
+LFLAGS   = -lcln -lginac
+CXXFLAGS = -Wall -Wpedantic
 
 OBJS   = $(patsubst %, $(BUILDDIR)/%.o,$(FILENAMES))
 SOURCE = $(patsubst %, %.cpp,$(FILENAMES))
@@ -23,6 +23,10 @@ debug: CXXFLAGS += $(DEBUGFLAGS)
 debug: $(OUT)
 release: CXXFLAGS += $(RELEASEFLAGS)
 release: $(OUT)
+cleandebug: clean
+cleandebug: debug
+cleanrelease: clean
+cleanrelease: release
 
 all: $(OUT)
 
@@ -30,7 +34,7 @@ $(OUT): $(OBJS)
 	$(CC) $(CXXFLAGS) -o $(BUILDDIR)/$@ $^ $(LFLAGS) -std=$(CSTD)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADER)
-	$(CC) $(CXXFLAGS) -c -o $@ $< $(LFLAGS) -I$(INCLUDEDIR) -std=$(CSTD)
+	$(CC) $(CXXFLAGS) -c -o $@ $< -I$(INCLUDEDIR) -std=$(CSTD)
 
 clean:
 	rm -f $(OBJS) $(OUT)

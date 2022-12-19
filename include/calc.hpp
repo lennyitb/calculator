@@ -4,10 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <regex>
 
-#define ERROR_MSG "error"
+#include <ginac/ginac.h>
 
+#define ERROR_MSG "error"
 typedef const unsigned int cuint;
 
 #include "nodecontainer.hpp"
