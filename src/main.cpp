@@ -7,29 +7,51 @@ int main()
 	#ifdef DEBUG
 	cout << "this is a debug build." << endl;
 	#endif
-	NodeContainer c{100};
 
-	constexpr unsigned int num_nodes = 4;
-	Node * n[num_nodes];
-	for (unsigned int i = 0; i < num_nodes; ++i)
+	native_cmd cmd = NativeCMD::plus;
+	
+	Stack s{100};
+	Parser::parse_to(cin, s);
+
+	Node * n = s.reserve_node();
+	n->set_type(TYPE_CMD);
+	n->data.data = (void *) cmd;
+	s.get_level_ref(2)->links.next = s.get_level_ref(1);
+	s.take();
+	n->links.down = s.take();
+	s.push_node(n);
+
+	cout << "depth: " << s.depth() << endl;
+
+	for (unsigned int i = s.depth(); i > 0; --i)
 	{
-		n[i] = c.reserve_node();
+		cout << i << ": " << s.get_level_ref(i)->get_data_str() << endl;
 	}
-	n[0]->data.type = TYPE_CMD;
-	n[0]->links.down = n[1];
-	n[1]->data.type = TYPE_NUMERIC;
-	n[1]->links.next = n[3];
-	n[1]->data.data = new numeric {5,7};
-	n[2]->data.type = TYPE_NUMERIC;
-	n[2]->data.data = new numeric {7,13};
-	*n[3] = *n[2];
-
-	// cout << n[0]->get_data_str() << endl;
-	// ostringstream s;
-	// cout << n[0]->get_data_str(s).str() << endl;
 
 
-	c.delete_all_from_root(n[0]);
+	// NodeContainer c{100};
+
+	// constexpr unsigned int num_nodes = 4;
+	// Node * n[num_nodes];
+	// for (unsigned int i = 0; i < num_nodes; ++i)
+	// {
+	// 	n[i] = c.reserve_node();
+	// }
+	// n[0]->data.type = TYPE_CMD;
+	// n[0]->links.down = n[1];
+	// n[1]->data.type = TYPE_NUMERIC;
+	// n[1]->links.next = n[3];
+	// n[1]->data.data = new numeric {5,7};
+	// n[2]->data.type = TYPE_NUMERIC;
+	// n[2]->data.data = new numeric {7,13};
+	// *n[3] = *n[2];
+
+	// // cout << n[0]->get_data_str() << endl;
+	// // ostringstream s;
+	// // cout << n[0]->get_data_str(s).str() << endl;
+
+
+	// c.delete_all_from_root(n[0]);
 
 	return 0;
 }

@@ -1,5 +1,5 @@
-FILENAMES = main nodecontainer stack
-_HEADERS  = calc.hpp nodecontainer.hpp stack.hpp
+FILENAMES = main nodecontainer stack parser nativecmd
+_HEADERS  = calc.hpp nodecontainer.hpp stack.hpp parser.hpp nativecmd.hpp cmdlookup.hpp
 
 DEBUGFLAGS   = -g -DDEBUG
 RELEASEFLAGS = -O3 -DRELEASE

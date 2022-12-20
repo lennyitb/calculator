@@ -3,6 +3,7 @@ using namespace std;
 using namespace GiNaC;
 
 Node::Node() {} // set_links_null(); }
+Node::Node(numeric * number) { set_numeric(number); }
 void Node::set_links_null()
 {
 	links.down = nullptr;
@@ -14,6 +15,18 @@ nodeDataType Node::get_type()
 {
 	if (data.deletable) { return TYPE_DELETABLE; }
 	return data.type;
+}
+Node * Node::set_numeric(numeric * number)
+{
+	data.type = TYPE_NUMERIC;
+	data.data = number;
+	return this;
+}
+Node * Node::set_cmd(void * cmd)
+{
+	data.type = TYPE_CMD;
+	data.data = cmd;
+	return this;
 }
 void Node::set_type(const nodeDataType type)
 {
@@ -36,7 +49,9 @@ void Node::mark_empty_delete_data()
 
 ostringstream & Node::get_this_data_str(ostringstream & s)
 {
-	if (data.type == TYPE_CMD) { s << "plus"; return s; }
+	if (data.type == TYPE_CMD) {
+		s << NativeCMD::get_cmd_str(data.data);
+	}
 	if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
 	s << ERROR_MSG; return s;
 }
@@ -122,6 +137,13 @@ Node * NodeContainer::reserve_node()
 	reserved_node->set_links_null();
 	--free_space_remaining;
 	return reserved_node;
+}
+Node * NodeContainer::reserve_node(numeric * number)
+{
+	Node * n = reserve_node();
+	n->data.data = number;
+	n->set_type(TYPE_NUMERIC);
+	return n;
 }
 void NodeContainer::delete_all_from_root(Node * root_node)
 {
