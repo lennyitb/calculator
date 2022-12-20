@@ -28,6 +28,13 @@ Node * Node::set_cmd(void * cmd)
 	data.data = cmd;
 	return this;
 }
+Node * Node::set_delim(const string & delim)
+{
+	data.type = TYPE_DELIM;
+	data.data = NativeCMD::get_cmd_ptr(delim);
+	return this;
+}
+
 void Node::set_type(const nodeDataType type)
 {
 	if (type == data.type) { return; }
@@ -51,8 +58,13 @@ ostringstream & Node::get_this_data_str(ostringstream & s)
 {
 	if (data.type == TYPE_CMD) {
 		s << NativeCMD::get_cmd_str(data.data);
+		return s;
 	}
 	if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
+	if (data.type == TYPE_DELIM) {
+		s << NativeCMD::get_cmd_str(data.data);
+		return s;
+	}
 	s << ERROR_MSG; return s;
 }
 ostringstream & Node::get_data_str(ostringstream & s)
@@ -61,12 +73,16 @@ ostringstream & Node::get_data_str(ostringstream & s)
 	get_this_data_str(s);
 	if (data.type == TYPE_CMD)
 	{
-		Node * next_op = links.down;
-		s << "("; next_op->get_data_str(s);
-		while(next_op->links.next)
+		s << "(";
+		if (links.down)
 		{
-			next_op = next_op->links.next;
-			s << ","; next_op->get_data_str(s);
+			Node * next_op = links.down;
+			next_op->get_data_str(s);
+			while(next_op->links.next)
+			{
+				next_op = next_op->links.next;
+				s << ","; next_op->get_data_str(s);
+			}
 		}
 		s << ")";
 	}
@@ -75,35 +91,12 @@ ostringstream & Node::get_data_str(ostringstream & s)
 string Node::get_this_data_str()
 {
 	ostringstream s;
-	switch (data.type)
-	{
-		case TYPE_CMD:
-			return "plus";
-			break;
-		case TYPE_NUMERIC:
-			s << dflt << *(numeric *) data.data;
-			return s.str();
-			break;
-		default:
-			return "error";
-	}
+	return get_this_data_str(s).str();
 }
 string Node::get_data_str()
 {
-	if (data.type < TYPE_NUMERIC) { return ERROR_MSG; }
-	string acc = get_this_data_str();
-	if (data.type == TYPE_CMD)
-	{
-		Node * next_op = links.down;
-		acc += "(" + next_op->get_data_str();
-		while(next_op->links.next)
-		{
-			next_op = next_op->links.next;
-			acc += "," + next_op->get_data_str();
-		}
-		acc += ")";
-	}
-	return acc;
+	ostringstream s;
+	return get_data_str(s).str();
 }
 
 NodeContainer::NodeContainer (cunt size) { initialize(size); }

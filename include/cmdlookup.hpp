@@ -1,17 +1,20 @@
 #ifndef CMDLOOKUP_H
 #define CMDLOOKUP_H
 
-#include <vector>
-
-namespace Dispatcher
+namespace CMDLookup
 {
 	struct Command {
-		char str[10];
+		std::string str;
 		void * cmd;
 	};
 	const std::vector<Command> command_list {
 		{"plus", (void *) &NativeCMD::plus},
-		{"minus", (void *) &NativeCMD::minus}
+		{"minus", (void *) &NativeCMD::minus},
+		{"times", (void *) &NativeCMD::times},
+		{"{", (void *) &NativeCMD::open_delim_curly},
+		{"[", (void *) &NativeCMD::open_delim_square},
+		{"(", (void *) &NativeCMD::open_delim_round},
+		{"<<", (void *) &NativeCMD::open_delim_angle}
 	};
 }
 

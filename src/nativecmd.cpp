@@ -3,7 +3,7 @@
 
 using namespace std;
 using namespace GiNaC;
-using namespace Dispatcher;
+using namespace CMDLookup;
 
 namespace NativeCMD
 {
@@ -19,10 +19,15 @@ namespace NativeCMD
 	{
 		for (unsigned int i = 0; i < command_list.size(); ++i)
 		{
-			if (command_list[i].str == s.c_str()) { return command_list[i].cmd; }
+			if (command_list[i].str == s) { return command_list[i].cmd; }
 		}
 		return nullptr;
 	}
+
+	Node * open_delim_curly (Node * n) { return n; }
+	Node * open_delim_square (Node * n) { return n; }
+	Node * open_delim_round (Node * n) { return n; }
+	Node * open_delim_angle (Node * n) { return n; }
 	
 	Node * plus (Node * n)
 	{
@@ -42,6 +47,17 @@ namespace NativeCMD
 		while (n)
 		{
 			*result -= *(numeric *) n->data.data;
+			n = n->links.next;
+		}
+		return new Node {result};
+	}
+	Node * times (Node * n) //copilot
+	{
+		n = n->links.down;
+		numeric * result {new numeric {*(numeric *) n->data.data}};
+		while (n)
+		{
+			*result *= *(numeric *) n->data.data;
 			n = n->links.next;
 		}
 		return new Node {result};

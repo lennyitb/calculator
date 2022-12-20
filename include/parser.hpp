@@ -3,7 +3,7 @@
 
 namespace Parser
 {
-	Stack & parse_to(std::istream & is, Stack & stack);
+	bool parse_to(std::istream & is, Stack & stack);
 }
 
 #endif

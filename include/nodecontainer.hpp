@@ -9,7 +9,7 @@ class Node; struct NodeLinks
 	Node * next;
 };
 
-enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_CMD, TYPE_DELIM };
+enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_EX, TYPE_CMD, TYPE_DELIM };
 
 struct NodeData
 {
@@ -32,8 +32,11 @@ public:
 	void set_links_null();
 	nodeDataType get_type();
 	inline void set_deletable(bool state) { data.deletable = state; }
+
 	Node * set_numeric (GiNaC::numeric * number);
 	Node * set_cmd (void * cmd);
+	Node * set_delim (const std::string & delim);
+
 	void set_type (const nodeDataType type);
 	void set_type_all (const nodeDataType type);
 

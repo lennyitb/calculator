@@ -8,8 +8,14 @@ namespace NativeCMD
 	std::string get_cmd_str (void * cmd);
 	void * get_cmd_ptr (const std::string & s);
 
+	Node * open_delim_curly (Node * n);
+	Node * open_delim_square (Node * n);
+	Node * open_delim_round (Node * n);
+	Node * open_delim_angle (Node * n);
+
 	Node * plus (Node * n);
 	Node * minus (Node * n);
+	Node * times (Node * n);
 }
 
 #endif

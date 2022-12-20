@@ -1,3 +1,15 @@
+
+
+
+
+/*
+ *
+ *     Welcome to my header file.
+ *           made by Lenny
+ *
+ */
+
+
 #ifndef CALC_H
 #define CALC_H
 

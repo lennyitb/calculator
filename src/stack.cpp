@@ -5,7 +5,8 @@ Stack::Stack(cunt size) : min_free_space(size / 10) {container.initialize(size);
 
 Node * Stack::get_level_ref(cunt level)
 {
-	if (root_node_list.size() < level) {return nullptr;}
+	if (root_node_list.size() < level)
+		{return nullptr;}
 	return *(root_node_list.end() - level);
 }
 
@@ -23,6 +24,11 @@ Node * Stack::take()
 {
 	Node * n = root_node_list.back();
 	root_node_list.pop_back();
+	return n;
+}
+Node * Stack::take_at(cunt level) //not working
+{
+	Node * n = get_level_ref(level);
 	return n;
 }
 void Stack::drop()

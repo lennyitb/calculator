@@ -8,25 +8,31 @@ int main()
 	cout << "this is a debug build." << endl;
 	#endif
 
-	native_cmd cmd = NativeCMD::plus;
+	// native_cmd cmd = NativeCMD::plus;
 	
 	Stack s{100};
-	Parser::parse_to(cin, s);
-
-	Node * n = s.reserve_node();
-	n->set_type(TYPE_CMD);
-	n->data.data = (void *) cmd;
-	s.get_level_ref(2)->links.next = s.get_level_ref(1);
-	s.take();
-	n->links.down = s.take();
-	s.push_node(n);
-
-	cout << "depth: " << s.depth() << endl;
-
-	for (unsigned int i = s.depth(); i > 0; --i)
+	while (true)
 	{
-		cout << i << ": " << s.get_level_ref(i)->get_data_str() << endl;
+		if (!Parser::parse_to(cin, s)) { break; }
+		for (unsigned int i = s.depth(); i > 0; --i)
+		{
+			cout << i << ": " << s.get_level_ref(i)->get_data_str();
+			cout << endl;
+		}
 	}
+	cout << "exiting..." << endl;
+	return 0;
+}
+
+	// Node * n = s.reserve_node();
+	// n->set_type(TYPE_CMD);
+	// n->data.data = (void *) cmd;
+	// s.get_level_ref(2)->links.next = s.get_level_ref(1);
+	// s.take();
+	// n->links.down = s.take();
+	// s.push_node(n);
+
+
 
 
 	// NodeContainer c{100};
@@ -53,8 +59,6 @@ int main()
 
 	// c.delete_all_from_root(n[0]);
 
-	return 0;
-}
 
 // 	Node n[3];
 // 	n[0].data.type = TYPE_NUMERIC;

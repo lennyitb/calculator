@@ -20,6 +20,7 @@ public:
 	Node * push_new();
 
 	Node * take();
+	Node * take_at(cunt level); //not working
 	void drop();
 
 	unsigned int min_free_space;
