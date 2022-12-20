@@ -6,11 +6,31 @@ namespace Parser
 {
 	Node * collect_cmd_ops (Node * n, Stack & stack)
 	{
-		if (stack.depth() < 2) { return n; }
-		n->links.down = stack.get_level_ref(2);
-		n->links.down->links.next = stack.take();
-		stack.take();
-		return n;
+		HangingOpenDelim d = stack.get_next_hanging_open_delim();
+		if (d.delim[0] == '{')
+		{
+			stack.take_at(d.level)->set_type(TYPE_DELETABLE);
+			unsigned int i = d.level - 1;
+			if (i < 1) { return n; }
+			Node * prev_op = stack.take_at(i);
+			n->links.down = prev_op;
+			--i;
+			Node * current_op;
+			while (i > 0)
+			{
+				current_op = stack.take_at(i);
+				prev_op->links.next = current_op;
+				prev_op = current_op;
+				--i;
+			}
+			return n;
+		} else {
+			if (stack.depth() < 2) { return n; }
+			n->links.down = stack.get_level_ref(2);
+			n->links.down->links.next = stack.take();
+			stack.take();
+			return n;
+		}
 	}
 	bool parse_native_cmd_to(const string & s, Stack & stack)
 	{

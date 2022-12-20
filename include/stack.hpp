@@ -1,6 +1,14 @@
 #ifndef STACK_H
 #define STACK_H
 
+struct HangingOpenDelim
+{
+	const char delim[2];
+	const unsigned int level;
+	HangingOpenDelim() : delim {'\0', '\0'}, level {0} {}
+	HangingOpenDelim(const char * d, unsigned int l) : delim {d[0], d[1]}, level {l} {}
+	inline bool does_exist() { return level ? true : false; }
+};
 class Stack
 {
 	NodeContainer container;
@@ -12,6 +20,8 @@ public:
 
 	inline unsigned int depth () { return root_node_list.size(); }
 	Node * get_level_ref (cunt level);
+
+	HangingOpenDelim get_next_hanging_open_delim ();
 
 	Node * reserve_node();
 	Node * reserve_node(GiNaC::numeric * number);

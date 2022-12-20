@@ -8,8 +8,6 @@ int main()
 	cout << "this is a debug build." << endl;
 	#endif
 
-	// native_cmd cmd = NativeCMD::plus;
-	
 	Stack s{100};
 	while (true)
 	{
@@ -23,6 +21,18 @@ int main()
 	cout << "exiting..." << endl;
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+	// //idk don't really wanna get rid of all this just yet
+
 
 	// Node * n = s.reserve_node();
 	// n->set_type(TYPE_CMD);
