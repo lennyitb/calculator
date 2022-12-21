@@ -22,16 +22,23 @@ Node * Node::set_numeric(numeric * number)
 	data.data = number;
 	return this;
 }
-Node * Node::set_cmd(void * cmd)
+Node * Node::set_cmd(Node * (*cmd)(Node *))
 {
 	data.type = TYPE_CMD;
-	data.data = cmd;
+	data.cmd = cmd;
 	return this;
 }
+
 Node * Node::set_delim(const string & delim)
 {
 	data.type = TYPE_DELIM;
-	data.data = NativeCMD::get_cmd_ptr(delim);
+	data.cmd = NativeCMD::get_cmd_ptr(delim);
+	return this;
+}
+Node * Node::set_symbol(const string & name)
+{
+	data.type = TYPE_DELIM;
+	data.data = new symbol;
 	return this;
 }
 
@@ -57,12 +64,12 @@ void Node::mark_empty_delete_data()
 ostringstream & Node::get_this_data_str(ostringstream & s)
 {
 	if (data.type == TYPE_CMD) {
-		s << NativeCMD::get_cmd_str(data.data);
+		s << NativeCMD::get_cmd_str(data.cmd);
 		return s;
 	}
 	if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
 	if (data.type == TYPE_DELIM) {
-		s << NativeCMD::get_cmd_str(data.data);
+		s << NativeCMD::get_cmd_str(data.cmd);
 		return s;
 	}
 	s << ERROR_MSG; return s;
@@ -97,6 +104,12 @@ string Node::get_data_str()
 {
 	ostringstream s;
 	return get_data_str(s).str();
+}
+
+Node * Node::eval()
+{
+	if (data.type != TYPE_CMD || links.down == nullptr) { return this; }
+	return data.cmd(this);
 }
 
 NodeContainer::NodeContainer (cunt size) { initialize(size); }

@@ -1,5 +1,7 @@
 #include "calc.hpp"
+using namespace std;
 using namespace GiNaC;
+
 
 Stack::Stack(cunt size) : min_free_space(size / 10) {container.initialize(size); }
 
@@ -17,13 +19,26 @@ HangingOpenDelim Stack::get_next_hanging_open_delim()
 	{
 		if (get_level_ref(i)->data.type == TYPE_DELIM)
 		{
-			*c = *NativeCMD::get_cmd_str(get_level_ref(i)->data.data).c_str();
+			*c = *NativeCMD::get_cmd_str(get_level_ref(i)->data.cmd).c_str();
 			HangingOpenDelim d {c, i};
 			return d;
 		}
 	}
 	HangingOpenDelim d; return d;
 }
+// SymbolRecord * Stack::get_or_register_symbol(string & symbolname)
+// {
+// 	for (list<SymbolRecord>::iterator i = symbol_table.begin(); i != symbol_table.end(); ++i)
+// 	{
+// 		if (i->name == symbolname)
+// 		{
+// 			return &*i;
+// 		}
+// 	}
+// 	symbol s{"x"};
+// 	s.
+
+// }
 
 Node * Stack::reserve_node() { return container.reserve_node(); }
 Node * Stack::reserve_node(numeric * number) { return container.reserve_node(number); }
@@ -57,4 +72,15 @@ void Stack::drop()
 void Stack::record_history()
 {
 	history_table.push_back(root_node_list);
+}
+
+void Stack::eval()
+{
+	Node * level = root_node_list.back();
+	Node * result = level->eval();
+	if (level != result)
+	{
+		root_node_list.back() = result;
+		level->set_type_all(TYPE_DELETABLE);
+	}
 }

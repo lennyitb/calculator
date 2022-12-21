@@ -2,6 +2,8 @@
 
 it's been a while since anyone has built a good calculator.
 
+the code is a little hack but i'm aiming for very high performance
+
 this is supposed to be a portable simple thing that takes most RPL commands for input, maybe I'm changing the syntax a little bit here and there.
 
 a neat feature for instance is that a 'hanging delimiter' is allowed to exist alone on the stack, which can later be closed to form a list, or specify the number of arguments in a command.
@@ -23,3 +25,6 @@ it supports undo, with the oldest changes being lazily deleted as memory becomes
 	- add user macros
 	- add lists 
 	- (which work in commands)
+	- error interface.
+		- outputs errors in a standard way
+		- describes the nature of the error alongside the discarded input which caused the error

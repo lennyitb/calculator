@@ -7,7 +7,7 @@ namespace Parser
 	Node * collect_cmd_ops (Node * n, Stack & stack)
 	{
 		HangingOpenDelim d = stack.get_next_hanging_open_delim();
-		if (d.delim[0] == '{')
+		if (d.delim[0] == CMD_DELIM)
 		{
 			stack.take_at(d.level)->set_type(TYPE_DELETABLE);
 			unsigned int i = d.level - 1;
@@ -34,14 +34,7 @@ namespace Parser
 	}
 	bool parse_native_cmd_to(const string & s, Stack & stack)
 	{
-		if (s == "plus")
-		{
-			Node * n = stack.reserve_node()->set_cmd((void *) NativeCMD::plus);
-			collect_cmd_ops(n, stack);
-			stack.push_node(n);
-			return true;
-		}
-		void * ptr = NativeCMD::get_cmd_ptr(s);
+		Node *(*ptr)(Node *) = NativeCMD::get_cmd_ptr(s);
 		if (ptr == nullptr) { return false; }
 		Node * n = stack.reserve_node()->set_cmd(ptr);
 		collect_cmd_ops(n, stack);
@@ -53,6 +46,13 @@ namespace Parser
 		regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?$");
 		regex cmd_rgx("^[a-zA-Z]+$");
 		regex open_delim_rgx("^(\\(|\\[|\\{|<<)$");
+		regex explicit_symbol_rgx("^'[a-zA-Z]+'?$");
+
+		if (s == "eval")
+		{
+			stack.eval();
+			return true;
+		}
 
 		if(regex_match(s,numeric_rgx))
 		{

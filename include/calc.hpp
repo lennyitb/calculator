@@ -23,6 +23,7 @@
 
 #define PARSE_EOF '\n'
 #define ERROR_MSG "error"
+#define CMD_DELIM '('
 
 typedef const unsigned int cunt;
 

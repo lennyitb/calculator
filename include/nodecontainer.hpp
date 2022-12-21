@@ -1,7 +1,9 @@
 #ifndef NODECONTAINER_H
 #define NODECONTAINER_H
 
-class Node; struct NodeLinks
+class Node;
+class NodeContainer;
+struct NodeLinks
 {
 	Node * up;
 	Node * down;
@@ -15,7 +17,10 @@ struct NodeData
 {
 	nodeDataType type;
 	bool deletable {false};
-	void * data;
+	union {
+		void * data;
+		Node * (*cmd)(Node *);
+	};
 };
 class Node
 {
@@ -28,14 +33,17 @@ public:
 	Node(GiNaC::numeric * number);
 	NodeLinks links;
 	NodeData data;
+
+	NodeContainer * get_container();
 	
 	void set_links_null();
 	nodeDataType get_type();
 	inline void set_deletable(bool state) { data.deletable = state; }
 
 	Node * set_numeric (GiNaC::numeric * number);
-	Node * set_cmd (void * cmd);
+	Node * set_cmd (Node * (*cmd)(Node *));
 	Node * set_delim (const std::string & delim);
+	Node * set_symbol (const std::string & name);
 
 	void set_type (const nodeDataType type);
 	void set_type_all (const nodeDataType type);
@@ -44,6 +52,8 @@ public:
 
 	std::string get_data_str();
 	std::ostringstream & get_data_str (std::ostringstream & s);
+
+	Node * eval();
 };
 
 class NodeContainer
