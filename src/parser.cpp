@@ -23,21 +23,24 @@ namespace Parser
 				prev_op = current_op;
 				--i;
 			}
-			return n;
 		} else {
+			for (unsigned int i = 1; i != 3; ++i)
+				{ if (stack.get_level_ref(i)->data.type == TYPE_DELIM) { return nullptr; } }
 			if (stack.depth() < 2) { return n; }
 			n->links.down = stack.get_level_ref(2);
 			n->links.down->links.next = stack.take();
 			stack.take();
-			return n;
 		}
+		return n;
 	}
 	bool parse_native_cmd_to(const string & s, Stack & stack)
 	{
-		Node *(*ptr)(Node *) = NativeCMD::get_cmd_ptr(s);
+		//this syntax is really starting to get on my nerves.
+		Node *(*ptr)(Node *, NodeContainer*) = NativeCMD::get_cmd_ptr(s);
 		if (ptr == nullptr) { return false; }
 		Node * n = stack.reserve_node()->set_cmd(ptr);
 		collect_cmd_ops(n, stack);
+		if (!n->links.down) { return false; }
 		stack.push_node(n);
 		return true;
 	}

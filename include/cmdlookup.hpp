@@ -5,16 +5,19 @@ namespace CMDLookup
 {
 	struct Command {
 		std::string str;
-		Node *(*cmd)(Node *);
+		std::string infx;
+		Node *(*cmd)(Node *, NodeContainer *);
+		bool infixable;
 	};
 	const std::vector<Command> command_list {
-		{"plus", &NativeCMD::plus},
-		{"minus", &NativeCMD::minus},
-		{"times", &NativeCMD::times},
-		{"{", &NativeCMD::open_delim_curly},
-		{"[", &NativeCMD::open_delim_square},
-		{"(", &NativeCMD::open_delim_round},
-		{"<<", &NativeCMD::open_delim_angle}
+		{"plus", "+", &NativeCMD::plus, true},
+		{"minus", "-", &NativeCMD::minus, true},
+		{"times", "*", &NativeCMD::times, true},
+		{"divide", "/", &NativeCMD::divide, true},
+		{"{", " ", &NativeCMD::open_delim_curly, false},
+		{"[", " ", &NativeCMD::open_delim_square, false},
+		{"(", " ", &NativeCMD::open_delim_round, false},
+		{"<<", " ", &NativeCMD::open_delim_angle, false}
 	};
 }
 

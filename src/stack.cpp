@@ -77,7 +77,7 @@ void Stack::record_history()
 void Stack::eval()
 {
 	Node * level = root_node_list.back();
-	Node * result = level->eval();
+	Node * result = level->eval(&container);
 	if (level != result)
 	{
 		root_node_list.back() = result;

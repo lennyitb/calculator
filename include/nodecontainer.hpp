@@ -19,7 +19,7 @@ struct NodeData
 	bool deletable {false};
 	union {
 		void * data;
-		Node * (*cmd)(Node *);
+		Node * (*cmd)(Node *, NodeContainer *);
 	};
 };
 class Node
@@ -41,9 +41,10 @@ public:
 	inline void set_deletable(bool state) { data.deletable = state; }
 
 	Node * set_numeric (GiNaC::numeric * number);
-	Node * set_cmd (Node * (*cmd)(Node *));
+	Node * set_cmd (Node * (*cmd)(Node *, NodeContainer *));
 	Node * set_delim (const std::string & delim);
 	Node * set_symbol (const std::string & name);
+	Node * set_ex (GiNaC::ex * expr);
 
 	void set_type (const nodeDataType type);
 	void set_type_all (const nodeDataType type);
@@ -53,7 +54,7 @@ public:
 	std::string get_data_str();
 	std::ostringstream & get_data_str (std::ostringstream & s);
 
-	Node * eval();
+	Node * eval(NodeContainer * c);
 };
 
 class NodeContainer

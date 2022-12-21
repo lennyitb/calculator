@@ -22,7 +22,7 @@ Node * Node::set_numeric(numeric * number)
 	data.data = number;
 	return this;
 }
-Node * Node::set_cmd(Node * (*cmd)(Node *))
+Node * Node::set_cmd(Node * (*cmd)(Node *, NodeContainer *))
 {
 	data.type = TYPE_CMD;
 	data.cmd = cmd;
@@ -39,6 +39,12 @@ Node * Node::set_symbol(const string & name)
 {
 	data.type = TYPE_DELIM;
 	data.data = new symbol;
+	return this;
+}
+Node * Node::set_ex(ex * expr)
+{
+	data.type = TYPE_EX;
+	data.data = expr;
 	return this;
 }
 
@@ -106,10 +112,10 @@ string Node::get_data_str()
 	return get_data_str(s).str();
 }
 
-Node * Node::eval()
+Node * Node::eval(NodeContainer * c)
 {
 	if (data.type != TYPE_CMD || links.down == nullptr) { return this; }
-	return data.cmd(this);
+	return data.cmd(this, c);
 }
 
 NodeContainer::NodeContainer (cunt size) { initialize(size); }
