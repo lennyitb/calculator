@@ -27,10 +27,11 @@ namespace NativeCMD
 	{
 		nodeDataType ret = TYPE_NUMERIC;
 		Node * it = n->links.down;
+		nodeDataType it_type;
 		while (it)
 		{
-			if (it->get_type() == TYPE_SYMBOL) { ret = TYPE_SYMBOL; }
-			if (it->get_type() == TYPE_EX) { return TYPE_EX; }
+			it_type = it->get_type();
+			if (it_type == TYPE_EX || it_type == TYPE_SYMBOL || it_type == TYPE_HOLD) { return TYPE_EX; }
 			it = it->links.next;
 		}
 		return ret;
@@ -46,7 +47,9 @@ namespace NativeCMD
 		n = n->links.down;
 		while (n)
 		{
+			if (n->data.type == TYPE_CMD) { n = n->eval(c); }
 			*(T *) result->data.data += *(T *) n->data.data;
+			n->set_deletable(true);
 			n = n->links.next;
 		}
 		return result;
@@ -63,12 +66,16 @@ namespace NativeCMD
 
 	template <class T> Node * minus_itr(Node * result, Node * n, NodeContainer * c)
 	{
-		n = n->links.down;
+		n = n->links.down;	
+		if (n->data.type == TYPE_CMD) { n = n->eval(c); }
 		*(T *) result->data.data = *(T *) n->data.data;
+		n->set_deletable(true);
 		n = n->links.next;
 		while (n)
 		{
+			if (n->data.type == TYPE_CMD) { n = n->eval(c); }
 			*(T *) result->data.data -= *(T *) n->data.data;
+			n->set_deletable(true);
 			n = n->links.next;
 		}
 		return result;
@@ -86,11 +93,15 @@ namespace NativeCMD
 	template <class T> Node * times_itr(Node * result, Node * n, NodeContainer * c)
 	{
 		n = n->links.down;
+		if (n->data.type == TYPE_CMD) { n = n->eval(c); }
 		*(T *) result->data.data = *(T *) n->data.data;
+		n->set_deletable(true);
 		n = n->links.next;
 		while (n)
 		{
+			if (n->data.type == TYPE_CMD) { n = n->eval(c); }
 			*(T *) result->data.data *= *(T *) n->data.data;
+			n->set_deletable(true);
 			n = n->links.next;
 		}
 		return result;
