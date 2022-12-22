@@ -3,10 +3,11 @@
 
 struct HangingOpenDelim
 {
-	const char delim[2];
+	const delimType d_type;
 	const unsigned int level;
-	HangingOpenDelim() : delim {'\0', '\0'}, level {0} {}
-	HangingOpenDelim(const char * d, unsigned int l) : delim {d[0], d[1]}, level {l} {}
+	HangingOpenDelim() : d_type {DELIM_NULL}, level {0} {}
+	HangingOpenDelim(const delimType d, const unsigned int l) : d_type {d}, level {l} {}
+	
 	inline bool does_exist() { return level ? true : false; }
 };
 
@@ -34,7 +35,8 @@ public:
 	Node * get_level_ref (cunt level);
 
 	// SymbolRecord * get_or_register_symbol (string & symbolname);
-	HangingOpenDelim get_next_hanging_open_delim ();
+	// HangingOpenDelim get_next_hanging_open_delim_s_type ();
+	HangingOpenDelim get_next_hanging_open_delim();
 
 	Node * reserve_node();
 	Node * reserve_node(GiNaC::numeric * number);

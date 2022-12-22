@@ -15,12 +15,8 @@ CSTD = c++11
 LFLAGS   = -lcln -lginac
 CXXFLAGS = -Wall -Wpedantic
 
-SRCFILE = .cpp
-OUTFILE = .o
-
-OBJS   = $(patsubst %, $(BUILDDIR)/%.o,$(FILENAMES))
-SOURCE = $(patsubst %, %.cpp,$(FILENAMES))
-HEADER = $(patsubst %, $(INCLUDEDIR)/%,$(_HEADERS))
+SRCFILE  = .cpp
+OUTFILE  = .o
 
 debug: CXXFLAGS += $(DEBUGFLAGS)
 debug: $(OUT)
@@ -28,6 +24,10 @@ release: CXXFLAGS += $(RELEASEFLAGS)
 release: $(OUT)
 cleandebug: clean debug
 cleanrelease: clean release
+
+OBJS   = $(patsubst %, $(BUILDDIR)/%.o,$(FILENAMES))
+SOURCE = $(patsubst %, %.cpp,$(FILENAMES))
+HEADER = $(patsubst %, $(INCLUDEDIR)/%,$(_HEADERS))
 
 all: $(OUT)
 

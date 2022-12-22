@@ -7,7 +7,7 @@ namespace Parser
 	Node * collect_cmd_ops (Node * n, Stack & stack)
 	{
 		HangingOpenDelim d = stack.get_next_hanging_open_delim();
-		if (d.delim[0] == CMD_DELIM)
+		if (d.d_type == DELIM_OPEN_PAREN)
 		{
 			stack.take_at(d.level)->set_type(TYPE_DELETABLE);
 			unsigned int i = d.level - 1;

@@ -12,15 +12,27 @@ Node * Stack::get_level_ref(cunt level)
 	return *(root_node_list.end() - level);
 }
 
+// HangingOpenDelim Stack::get_next_hanging_open_delim_s_type()
+// {
+// 	char c[2];
+// 	for (unsigned int i = root_node_list.size(); i > 0; --i)
+// 	{
+// 		if (get_level_ref(i)->data.type == TYPE_DELIM)
+// 		{
+// 			*c = *NativeCMD::get_cmd_str(get_level_ref(i)->data.cmd).c_str();
+// 			HangingOpenDelim d {c, i};
+// 			return d;
+// 		}
+// 	}
+// 	HangingOpenDelim d; return d;
+// }
 HangingOpenDelim Stack::get_next_hanging_open_delim()
 {
-	char c[2];
-	for (unsigned int i = root_node_list.size(); i > 0; --i)
+	for (unsigned int i = 1; i <= root_node_list.size(); ++i)
 	{
 		if (get_level_ref(i)->data.type == TYPE_DELIM)
 		{
-			*c = *NativeCMD::get_cmd_str(get_level_ref(i)->data.cmd).c_str();
-			HangingOpenDelim d {c, i};
+			HangingOpenDelim d {get_level_ref(i)->data.delim, i};
 			return d;
 		}
 	}

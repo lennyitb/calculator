@@ -1,5 +1,9 @@
 build
 build/*
+
+release
+release/*
+
 calculatorv3.code-workspace
 
 include/nodedatatypes.hpp

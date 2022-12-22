@@ -11,8 +11,9 @@ struct NodeLinks
 	Node * next;
 };
 
-enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_ERROR, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_EX, TYPE_HOLD, TYPE_CMD, TYPE_DELIM };
+enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_ERROR, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_EX, TYPE_HOLD, TYPE_CMD, TYPE_DELIM, TYPE_LIST, TYPE_SEQ };
 enum cmdSymbol { CMD_NULL, CMD_PLUS, CMD_MINUS, CMD_TIMES, CMD_DIVIDE };
+enum delimType { DELIM_NULL, DELIM_OPEN_PAREN, DELIM_OPEN_CURLY, DELIM_OPEN_SQUARE, DELIM_OPEN_ANGLE, DELIM_CLOSE_PAREN, DELIM_CLOSE_CURLY, DELIM_CLOSE_SQUARE, DELIM_CLOSE_ANGLE };
 
 struct NodeData
 {
@@ -21,6 +22,7 @@ struct NodeData
 	union {
 		void * data;
 		Node * (*cmd)(Node *, NodeContainer *);
+		delimType delim;
 		GiNaC::numeric * data_numeric;
 		GiNaC::symbol * data_symbol;
 		GiNaC::ex * data_ex;

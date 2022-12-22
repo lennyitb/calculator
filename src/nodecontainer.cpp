@@ -1,6 +1,7 @@
 #include "calc.hpp"
 using namespace std;
 using namespace GiNaC;
+using namespace NodeInjectOperator;
 
 Node::Node() { set_links_null(); }
 Node::Node(numeric * number) { set_numeric(number); set_links_null(); }
@@ -43,15 +44,39 @@ Node * Node::set_cmd(Node * (*cmd)(Node *, NodeContainer *))
 	return this;
 }
 
+inline delimType delim_lookup(const string & delim)
+{
+	if (delim == "(") { return DELIM_OPEN_PAREN; }
+	if (delim == ")") { return DELIM_CLOSE_PAREN; }
+	if (delim == "{") { return DELIM_OPEN_CURLY; }
+	if (delim == "}") { return DELIM_CLOSE_CURLY; }
+	if (delim == "[") { return DELIM_OPEN_SQUARE; }
+	if (delim == "]") { return DELIM_CLOSE_SQUARE; }
+	if (delim == "<<") { return DELIM_OPEN_ANGLE; }
+	if (delim == ">>") { return DELIM_CLOSE_ANGLE; }
+	return DELIM_NULL;
+}
+inline const string delim_lookup(const delimType delim)
+{
+	if (delim == DELIM_OPEN_PAREN) { return "("; }
+	if (delim == DELIM_CLOSE_PAREN) { return ")"; }
+	if (delim == DELIM_OPEN_CURLY) { return "{"; }
+	if (delim == DELIM_CLOSE_CURLY) { return "}"; }
+	if (delim == DELIM_OPEN_SQUARE) { return "["; }
+	if (delim == DELIM_CLOSE_SQUARE) { return "]"; }
+	if (delim == DELIM_OPEN_ANGLE) { return "<<"; }
+	if (delim == DELIM_CLOSE_ANGLE) { return ">>"; }
+	return ERROR_MSG;
+}
 Node * Node::set_delim(const string & delim)
 {
 	data.type = TYPE_DELIM;
-	data.cmd = NativeCMD::get_cmd_ptr(delim);
+	data.delim = delim_lookup(delim);
 	return this;
 }
 Node * Node::set_symbol(const string & name)
 {
-	data.type = TYPE_DELIM;
+	data.type = TYPE_SYMBOL;
 	data.data = new symbol;
 	return this;
 }
@@ -95,7 +120,7 @@ ostringstream & Node::get_this_data_str(ostringstream & s)
 	// if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
 	if (data.type == TYPE_NUMERIC) { s << dflt << *data.data_numeric; return s; }
 	if (data.type == TYPE_DELIM) {
-		s << NativeCMD::get_cmd_str(data.cmd);
+		s << delim_lookup(data.delim);
 		return s;
 	}
 	s << ERROR_MSG; return s;

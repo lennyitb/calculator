@@ -10,9 +10,6 @@ int main()
 
 	Stack s {100};
 
-	cout << "test build- please input ( number number number plus" << endl;
-
-
 	while (true)
 	{
 		if (!Parser::parse_to(cin, s)) { break; }

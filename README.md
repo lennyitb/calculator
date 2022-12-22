@@ -16,8 +16,7 @@ it's meant to ultimately be a very simple API with some sort of user interface b
 
 it's supposed to be able to run on a microcontroller. Under the hood, it uses the GiNaC library for arbitrary precision, and some special numeric types and symbolic expressions. It's meant to be a very powerful calculator.
 
-when nodes are collapsing in an evaluation, this is the hierarchy:
-
+when nodes are collapsing in an evaluation, this is the hierarchy which the result will assume:
 - TYPE_ERROR
 - TYPE_EX
 - TYPE_NUMERIC
@@ -33,11 +32,12 @@ when nodes are collapsing in an evaluation, this is the hierarchy:
 - [x] evaluate commands
 - [ ] stack commands
 - [ ] symbols
-- [ ] mix numerics with expressions
+- [ ] patch allll the memory leaks
+- [x] mix numerics with expressions //weird thing for past lenny to write- it pretty much works out of the box right now
 - [ ] make undo work
 - [ ] add user macros
-- [ ] add lists 
-- [ ] (which work in commands)
+- [ ] add lists (which work in commands)
+- [ ] allow partial evaluation for strange types like sequences
 - [ ] error interface.
 	- outputs errors in a standard way
 	- describes the nature of the error alongside the discarded input which caused the error
