@@ -26,6 +26,17 @@ void Node::set_links_null()
 	links.next = nullptr;
 	links.prev = nullptr;
 }
+
+Node * Node::copy (Node * old_node)
+{
+	links = old_node->links;
+	data = old_node->data;
+	if (old_node->data.type == TYPE_NUMERIC) { data.data_numeric = new numeric {*old_node->data.data_numeric}; }
+	else if (old_node->data.type == TYPE_SYMBOL) { data.data_symbol = new symbol {*old_node->data.data_symbol}; }
+	else if (old_node->data.type == TYPE_EX) { data.data_ex = new ex {*old_node->data.data_ex}; }
+	return this;
+}
+
 nodeDataType Node::get_type()
 {
 	if (data.deletable) { return TYPE_DELETABLE; }
@@ -159,15 +170,15 @@ string Node::get_data_str()
 
 Node * inject_fn (Node * result, Node * op, cmdSymbol cmd)
 {
-	if (result->data.type == TYPE_NUMERIC) { if (*result->data.data_numeric == 0) {*result->data.data_numeric = *op->data.data_numeric; return result; } }
-	if (result->data.type == TYPE_EX) {
-		if (*result->data.data_ex == 0) {
-			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex = *op->data.data_numeric; }
-			else if (op->data.type == TYPE_EX) { *result->data.data_ex = *op->data.data_ex; }
-			else { result-> set_type(TYPE_ERROR);}
-		}
-		return result;
-	}
+	// if (result->data.type == TYPE_NUMERIC) { if (*result->data.data_numeric == 0) {*result->data.data_numeric = *op->data.data_numeric; return result; } }
+	// if (result->data.type == TYPE_EX) {
+	// 	if (*result->data.data_ex == 0) {
+	// 		if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex = *op->data.data_numeric; }
+	// 		else if (op->data.type == TYPE_EX) { *result->data.data_ex = *op->data.data_ex; }
+	// 		else { result-> set_type(TYPE_ERROR);}
+	// 	}
+	// 	// return result;
+	// }
 	if (cmd == CMD_PLUS) { inject_addto(result, op); }
 	if (cmd == CMD_MINUS) { inject_minusto(result, op); }
 	if (cmd == CMD_TIMES) { inject_timesto(result, op); }
@@ -175,26 +186,56 @@ Node * inject_fn (Node * result, Node * op, cmdSymbol cmd)
 	return result;
 }
 
-//inject: interesting FP concept that applies a function to an accumulator, and each element in a list, and returns the accumulator
+//inject: interesting FP concept that applies a function to an accumulator, and each element in a list, then returns the accumulator
 Node * Node::inject_to(Node * result)
-//error for minus/times/divide commands because result is initialized to zero
+//current headache is that result isn't being set to the first operand
 //i need to find a way to set result to the first element evaluation
 {
-	if (data.type!=TYPE_CMD || links.down == nullptr) { return this; }
-	result->set_type(get_eval_type());
-	Node * next_op {links.down};
-	cmdSymbol this_cmd { data.cmd_symbol };
+	return new_inject_to(result);
+	// if (data.type!=TYPE_CMD || links.down == nullptr) { return this; }
+	// result->set_type(get_eval_type());
+	// Node * next_op {links.down};
+	// cmdSymbol this_cmd { data.cmd_symbol };
 
+	// do {
+	// 	// Node this_result; this_result.set_type(next_op->get_eval_type());
+	// 	if (next_op->data.type == TYPE_CMD)
+	// 	{
+	// 		Node int_result;
+	// 		int_result.set_type(next_op->get_eval_type());
+	// 		next_op->inject_to(&int_result);
+	// 		inject_fn(result, &int_result, this_cmd);
+	// 	} else {
+	// 		inject_fn(result, next_op, this_cmd);
+	// 	}
+	// } while ((next_op = next_op->links.next));
+	// return result;
+}
+Node * Node::new_inject_to(Node * result)
+{
+	// if it's not a command it's a leaf, and is considered aleady evaluated
+	// but it needs to be copied into result memory management
+	if (data.type!=TYPE_CMD || links.down == nullptr)
+	{
+		result->copy(this);
+		set_deletable(true);
+		return result;
+	}
+	Node * next_op { links.down };
+	nodeDataType result_type { get_eval_type() };
+	result->set_type(result_type);
+	//evaluate first operand, then set result to that
+	next_op->new_inject_to(result);
+	//iterate over every other operand, evaluating it and applying the function to the result
 	do {
-		// Node this_result; this_result.set_type(next_op->get_eval_type());
 		if (next_op->data.type == TYPE_CMD)
 		{
 			Node int_result;
-			int_result.set_type(next_op->get_eval_type());
-			next_op->inject_to(&int_result);
-			inject_fn(result, &int_result, this_cmd);
+			int_result.set_type(result_type);
+			next_op->new_inject_to(&int_result);
+			inject_fn(result, &int_result, data.cmd_symbol);
 		} else {
-			inject_fn(result, next_op, this_cmd);
+			inject_fn(result, next_op, data.cmd_symbol);
 		}
 	} while ((next_op = next_op->links.next));
 	return result;
@@ -212,6 +253,7 @@ nodeDataType Node::get_eval_type()
 	nodeDataType down_type { links.down->get_eval_type() };
 	nodeDataType next_type;
 	if (links.next) { next_type = links.next->get_eval_type(); } else { next_type = TYPE_EMPTY; } 
+
 	if (compare_types_to(TYPE_ERROR, data.type, down_type, next_type)) { return TYPE_ERROR; }
 	if (compare_types_to(TYPE_EX, data.type, down_type, next_type)) { return TYPE_EX; }
 	if (compare_types_to(TYPE_NUMERIC, data.type, down_type, next_type)) { return TYPE_NUMERIC; }
@@ -220,6 +262,7 @@ nodeDataType Node::get_eval_type()
 	if (compare_types_to(TYPE_DELIM, data.type, down_type, next_type)) { return TYPE_DELIM; }
 	if (compare_types_to(TYPE_CMD, data.type, down_type, next_type)) { return TYPE_CMD; }
 	if (compare_types_to(TYPE_EMPTY, data.type, down_type, next_type)) { return TYPE_EMPTY; }
+
 	return TYPE_ERROR;
 }
 Node * Node::eval(NodeContainer * c)

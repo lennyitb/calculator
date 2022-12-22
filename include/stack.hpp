@@ -46,13 +46,20 @@ public:
 
 	Node * take();
 	Node * take_at(cunt level); //not working
-	void drop();
 
 	unsigned int min_free_space;
 
 	void record_history();
 
 	void eval();
+
+
+	void swap();
+	void drop();
+	//TODO make these return some kind of error later if n is out of bounds
+	cunt get_cunt();
+	void rolln();
+	void unrolln();
 };
 
 #endif

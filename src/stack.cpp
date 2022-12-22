@@ -2,6 +2,7 @@
 using namespace std;
 using namespace GiNaC;
 
+regex unsigned_int_rgx("^[0-9]+$");
 
 Stack::Stack(cunt size) : min_free_space(size / 10) {container.initialize(size); }
 
@@ -62,11 +63,11 @@ Node * Stack::take_at(cunt level) //not working
 	// n->set_type_all(TYPE_DELETABLE);
 	return n;
 }
-void Stack::drop()
-{
-	root_node_list.back()->set_type_all(TYPE_DELETABLE);
-	root_node_list.pop_back();
-}
+// void Stack::drop()
+// {
+// 	root_node_list.back()->set_type_all(TYPE_DELETABLE);
+// 	root_node_list.pop_back();
+// }
 
 void Stack::record_history()
 {
@@ -86,4 +87,43 @@ void Stack::eval()
 	} else {
 		container.delete_all_from_root(result);
 	}
+}
+
+void Stack::swap()
+{
+	record_history();
+	vector<Node *>::iterator it { (root_node_list.end() - 2) };
+	Node * n { *it };
+	root_node_list.erase(it);
+	root_node_list.push_back(n);
+}
+void Stack::drop()
+{
+	record_history();
+	root_node_list.back()->set_type_all(TYPE_DELETABLE);
+	root_node_list.pop_back();
+}
+cunt Stack::get_cunt()
+{
+	const string num_s { take()->get_data_str() };
+	if (regex_match(num_s, unsigned_int_rgx)) {
+		return stoi(num_s);
+	}	return 0;
+}
+void Stack::rolln()
+{
+	record_history();
+	Node * n { root_node_list.back() };
+	n->set_type_all(TYPE_DELETABLE);
+	root_node_list.pop_back();
+	root_node_list.insert(root_node_list.end() - get_cunt(), n);
+}
+void Stack::unrolln()
+{
+	record_history();
+	vector<Node *>::iterator it { root_node_list.end() - get_cunt() };
+	Node * n { *it };
+	n->set_type_all(TYPE_DELETABLE);
+	root_node_list.erase(it);
+	root_node_list.push_back(n);
 }

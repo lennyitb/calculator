@@ -4,6 +4,12 @@ using namespace GiNaC;
 
 namespace Parser
 {
+	std::regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?$");
+	std::regex cmd_rgx("^[a-zA-Z]+$");
+	std::regex open_delim_rgx("^(\\(|\\[|\\{|<<)$");
+	std::regex explicit_symbol_rgx("^'[a-zA-Z]+'?$");
+	std::regex unsigned_int_rgx("^[0-9]+$");
+
 	Node * collect_cmd_ops (Node * n, Stack & stack)
 	{
 		HangingOpenDelim d = stack.get_next_hanging_open_delim();
@@ -45,13 +51,10 @@ namespace Parser
 		stack.push_node(n);
 		return true;
 	}
+	
+
 	bool parse_word_to(const string & s, Stack & stack)
 	{
-		regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?$");
-		regex cmd_rgx("^[a-zA-Z]+$");
-		regex open_delim_rgx("^(\\(|\\[|\\{|<<)$");
-		regex explicit_symbol_rgx("^'[a-zA-Z]+'?$");
-
 		if (s == "eval")
 		{
 			stack.eval();
@@ -63,6 +66,9 @@ namespace Parser
 			stack.push_new()->set_numeric(new numeric {s.c_str()});
 			return true;
 		}
+		if (s == "swap") { stack.swap(); return true; }
+		if (s == "drop") { stack.drop(); return true; }
+		if (s == "rolln") { stack.rolln(); return true; }
 		if(regex_match(s,cmd_rgx))
 		{
 			return parse_native_cmd_to(s, stack);

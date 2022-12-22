@@ -36,13 +36,17 @@ class Node
 	std::string get_this_data_str ();
 	std::ostringstream & get_this_data_str (std::ostringstream & s);
 	// Node * inject_fn (Node * result, Node * op, cmdSymbol cmd);
+	Node * new_inject_to (Node * result);
 public:
 	Node();
 	Node(GiNaC::numeric * number);
 	Node(Node & old_node);
+	// Node operator= (Node & old_node);
 	~Node();
 	NodeLinks links;
 	NodeData data;
+
+	Node * copy(Node * old_node);
 
 	void set_links_null();
 	nodeDataType get_type();

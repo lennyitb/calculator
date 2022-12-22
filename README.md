@@ -1,5 +1,7 @@
+
 # Lenny's virtual RPL runtime rewrite III
-### Written by: Lenny
+
+## Written by: Lenny
 
 
 It's been a while since anyone has built a good calculator.
@@ -50,14 +52,14 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
 - [x] evaluate commands
 - [ ] stack commands
 	- THE stack commands I wish to support descending order:
-		- [ ] swap
-		- [ ] drop
-		- [ ] rolln/unrolln //haha swap, drop & roll lmao
-		- [ ] roll/unroll
-		- [ ] rot/unrot
-		- [ ] dup
-		- [ ] dupn
-		- [ ] yank
+		- [ ] `swap`
+		- [ ] `drop`
+		- [ ] `rolln` / `unrolln` //haha swap, drop & roll lmao
+		- [ ] `roll` / `unroll`
+		- [ ] `rot` / `unrot`
+		- [ ] `dup`
+		- [ ] `dupn`
+		- [ ] `yank`
 		- [ ] and guys just um let me know in the comments down below if you think of any more. don't forget to like and subscribe.
 - [ ] symbols
 - [ ] patch allll the memory leaks
@@ -77,6 +79,7 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
 	- recall variables and available memory and things
 	- change input/output syntax/format
 	- global numeric mode
+- [ ] add make targets for web assembly and embedded compilation. Also build GiNaC from source.
 
 ## Current Known Bugs:
 
