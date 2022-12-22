@@ -191,28 +191,6 @@ Node * Node::inject_to(Node * result)
 //current headache is that result isn't being set to the first operand
 //i need to find a way to set result to the first element evaluation
 {
-	return new_inject_to(result);
-	// if (data.type!=TYPE_CMD || links.down == nullptr) { return this; }
-	// result->set_type(get_eval_type());
-	// Node * next_op {links.down};
-	// cmdSymbol this_cmd { data.cmd_symbol };
-
-	// do {
-	// 	// Node this_result; this_result.set_type(next_op->get_eval_type());
-	// 	if (next_op->data.type == TYPE_CMD)
-	// 	{
-	// 		Node int_result;
-	// 		int_result.set_type(next_op->get_eval_type());
-	// 		next_op->inject_to(&int_result);
-	// 		inject_fn(result, &int_result, this_cmd);
-	// 	} else {
-	// 		inject_fn(result, next_op, this_cmd);
-	// 	}
-	// } while ((next_op = next_op->links.next));
-	// return result;
-}
-Node * Node::new_inject_to(Node * result)
-{
 	// if it's not a command it's a leaf, and is considered aleady evaluated
 	// but it needs to be copied into result memory management
 	if (data.type!=TYPE_CMD || links.down == nullptr)
@@ -225,14 +203,14 @@ Node * Node::new_inject_to(Node * result)
 	nodeDataType result_type { get_eval_type() };
 	result->set_type(result_type);
 	//evaluate first operand, then set result to that
-	next_op->new_inject_to(result);
+	next_op->inject_to(result);
 	//iterate over every other operand, evaluating it and applying the function to the result
 	do {
 		if (next_op->data.type == TYPE_CMD)
 		{
 			Node int_result;
 			int_result.set_type(result_type);
-			next_op->new_inject_to(&int_result);
+			next_op->inject_to(&int_result);
 			inject_fn(result, &int_result, data.cmd_symbol);
 		} else {
 			inject_fn(result, next_op, data.cmd_symbol);

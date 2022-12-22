@@ -36,7 +36,6 @@ class Node
 	std::string get_this_data_str ();
 	std::ostringstream & get_this_data_str (std::ostringstream & s);
 	// Node * inject_fn (Node * result, Node * op, cmdSymbol cmd);
-	Node * new_inject_to (Node * result);
 public:
 	Node();
 	Node(GiNaC::numeric * number);
