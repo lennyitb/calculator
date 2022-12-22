@@ -12,20 +12,6 @@ Node * Stack::get_level_ref(cunt level)
 	return *(root_node_list.end() - level);
 }
 
-// HangingOpenDelim Stack::get_next_hanging_open_delim_s_type()
-// {
-// 	char c[2];
-// 	for (unsigned int i = root_node_list.size(); i > 0; --i)
-// 	{
-// 		if (get_level_ref(i)->data.type == TYPE_DELIM)
-// 		{
-// 			*c = *NativeCMD::get_cmd_str(get_level_ref(i)->data.cmd).c_str();
-// 			HangingOpenDelim d {c, i};
-// 			return d;
-// 		}
-// 	}
-// 	HangingOpenDelim d; return d;
-// }
 HangingOpenDelim Stack::get_next_hanging_open_delim()
 {
 	for (unsigned int i = 1; i <= root_node_list.size(); ++i)
@@ -38,6 +24,7 @@ HangingOpenDelim Stack::get_next_hanging_open_delim()
 	}
 	HangingOpenDelim d; return d;
 }
+// // not getting rid of this commented code. i really want for it to exist
 // SymbolRecord * Stack::get_or_register_symbol(string & symbolname)
 // {
 // 	for (list<SymbolRecord>::iterator i = symbol_table.begin(); i != symbol_table.end(); ++i)

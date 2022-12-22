@@ -1,4 +1,6 @@
 # Lenny's virtual RPL runtime rewrite III
+### written by: Lenny
+
 
 it's been a while since anyone has built a good calculator.
 
@@ -16,7 +18,10 @@ it's meant to ultimately be a very simple API with some sort of user interface b
 
 it's supposed to be able to run on a microcontroller. Under the hood, it uses the GiNaC library for arbitrary precision, and some special numeric types and symbolic expressions. It's meant to be a very powerful calculator.
 
+this is still highly experimental and broken.
+
 when nodes are collapsing in an evaluation, this is the hierarchy which the result will assume:
+
 - TYPE_ERROR
 - TYPE_EX
 - TYPE_NUMERIC
@@ -31,11 +36,13 @@ when nodes are collapsing in an evaluation, this is the hierarchy which the resu
 
 - [x] evaluate commands
 - [ ] stack commands
+- [ ] rethink all that nativecmd b***shit smh my head it's already pretty much obsolete
 - [ ] symbols
 - [ ] patch allll the memory leaks
-- [x] mix numerics with expressions //weird thing for past lenny to write- it pretty much works out of the box right now
+- [x] mix numerics with expressions //weird thing for past lenny to write- it pretty much works out of the box right now and there's pretty much no way to test it without having symbols
 - [ ] make undo work
 - [ ] add user macros
+- [ ] implement dynamic resizing of NodeContainer
 - [ ] add lists (which work in commands)
 - [ ] allow partial evaluation for strange types like sequences
 - [ ] error interface.
@@ -45,3 +52,4 @@ when nodes are collapsing in an evaluation, this is the hierarchy which the resu
 	- to evaluate automatically
 	- recall variables and availible memory and things
 	- change input/output syntax/format
+	- global numeric mode

@@ -44,8 +44,6 @@ public:
 	NodeLinks links;
 	NodeData data;
 
-	NodeContainer * get_container();
-	
 	void set_links_null();
 	nodeDataType get_type();
 	inline void set_deletable(bool state) { data.deletable = state; }
@@ -70,6 +68,10 @@ public:
 	Node * eval(NodeContainer * c);
 };
 
+// I'm kind of pround of this. It's a container of nodes linked in a tree, but the empty nodees are all forward linked to eachother;
+// making it a very fast operation to find an empty node, or delete a node.
+// A key feature is that it makes the last empty node a 'cut card', like in a shoe blackjack game.
+// When the cut card is reached, the deck is reshuffled. In this case, the cut card indicates that every node following is empty.
 class NodeContainer
 {
 	Node * container;

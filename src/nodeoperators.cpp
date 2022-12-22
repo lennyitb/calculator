@@ -10,9 +10,10 @@ namespace NodeInjectOperator
 			return result;
 		}
 		if (result->data.type == TYPE_EX) {
-			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex += *op->data.data_numeric; return result; }
-			if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex += *op->data.data_symbol; return result; }
-			if (op->data.type == TYPE_EX) { *result->data.data_ex += *op->data.data_ex; return result; }
+			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex += *op->data.data_numeric; }
+			else if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex += *op->data.data_symbol; }
+			else if (op->data.type == TYPE_EX) { *result->data.data_ex += *op->data.data_ex; }
+			return result;
 		}
 		return result->set_type(TYPE_ERROR);
 	}
@@ -23,9 +24,10 @@ namespace NodeInjectOperator
 			return result;
 		}
 		if (result->data.type == TYPE_EX) {
-			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex -= *op->data.data_numeric; return result; }
-			if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex -= *op->data.data_symbol; return result; }
-			if (op->data.type == TYPE_EX) { *result->data.data_ex -= *op->data.data_ex; return result; }
+			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex -= *op->data.data_numeric; }
+			else if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex -= *op->data.data_symbol; }
+			else if (op->data.type == TYPE_EX) { *result->data.data_ex -= *op->data.data_ex; }
+			return result;
 		}
 		return result->set_type(TYPE_ERROR);
 	}
@@ -36,9 +38,10 @@ namespace NodeInjectOperator
 			return result;
 		}
 		if (result->data.type == TYPE_EX) {
-			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex *= *op->data.data_numeric; return result; }
-			if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex *= *op->data.data_symbol; return result; }
-			if (op->data.type == TYPE_EX) { *result->data.data_ex *= *op->data.data_ex; return result; }
+			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex *= *op->data.data_numeric; }
+			else if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex *= *op->data.data_symbol; }
+			else if (op->data.type == TYPE_EX) { *result->data.data_ex *= *op->data.data_ex; }
+			return result;
 		}
 		return result->set_type(TYPE_ERROR);
 	}
@@ -49,9 +52,10 @@ namespace NodeInjectOperator
 			return result;
 		}
 		if (result->data.type == TYPE_EX) {
-			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex /= *op->data.data_numeric; return result; }
-			if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex /= *op->data.data_symbol; return result; }
-			if (op->data.type == TYPE_EX) { *result->data.data_ex /= *op->data.data_ex; return result; }
+			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex /= *op->data.data_numeric; }
+			else if (op->data.type == TYPE_SYMBOL) { *result->data.data_ex /= *op->data.data_symbol; }
+			else if (op->data.type == TYPE_EX) { *result->data.data_ex /= *op->data.data_ex; }
+			return result;
 		}
 		return result->set_type(TYPE_ERROR);
 	}

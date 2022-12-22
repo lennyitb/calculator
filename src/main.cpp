@@ -1,6 +1,5 @@
 #include "calc.hpp"
 using namespace std;
-using namespace GiNaC;
 
 int main()
 {
