@@ -36,7 +36,7 @@ namespace Parser
 	bool parse_native_cmd_to(const string & s, Stack & stack)
 	{
 		//this syntax is really starting to get on my nerves.
-		Node *(*ptr)(Node *, NodeContainer*) = NativeCMD::get_cmd_ptr(s);
+		Node *(*ptr)(Node *, NodeContainer*){NativeCMD::get_cmd_ptr(s)};
 		if (ptr == nullptr) { return false; }
 		Node * n = stack.reserve_node()->set_cmd(ptr);
 		n->data.cmd_symbol = NativeCMD::get_cmd_symbol(s);

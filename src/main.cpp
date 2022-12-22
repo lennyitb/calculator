@@ -12,12 +12,12 @@ int main()
 	while (true)
 	{
 		if (!Parser::parse_to(cin, s)) { break; }
-		cout << "okay thank you." << endl;
 		for (unsigned int i = s.depth(); i > 0; --i)
 		{
 			cout << i << ": " << s.get_level_ref(i)->get_data_str();
 			cout << endl;
 		}
+		cout << "okay thank you." << endl;
 	}
 	cout << "exiting..." << endl;
 	return 0;

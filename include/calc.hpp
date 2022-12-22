@@ -1,12 +1,12 @@
 
 
 
-/*
- *
- *     Welcome to my header file.
- *           made by Lenny
- *
- */
+/**************************************\
+|*                                    *|
+|*     Welcome to my header file.     *|
+|*           made by Lenny            *|
+|*                                    *|
+\**************************************/
 
 
 #ifndef CALC_H

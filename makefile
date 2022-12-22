@@ -25,8 +25,8 @@ release: $(OUT)
 cleandebug: clean debug
 cleanrelease: clean release
 
-OBJS   = $(patsubst %, $(BUILDDIR)/%.o,$(FILENAMES))
-SOURCE = $(patsubst %, %.cpp,$(FILENAMES))
+OBJS   = $(patsubst %, $(BUILDDIR)/%$(OUTFILE),$(FILENAMES))
+SOURCE = $(patsubst %, %$(SRCFILE),$(FILENAMES))
 HEADER = $(patsubst %, $(INCLUDEDIR)/%,$(_HEADERS))
 
 all: $(OUT)
