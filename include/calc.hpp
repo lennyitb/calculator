@@ -28,6 +28,7 @@
 typedef const unsigned int cunt;
 
 #include "nodecontainer.hpp"
+#include "nodeoperators.hpp"
 #include "stack.hpp"
 #include "nativecmd.hpp"
 #include "parser.hpp"

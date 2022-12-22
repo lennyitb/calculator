@@ -1,5 +1,5 @@
-FILENAMES = main nodecontainer stack parser nativecmd
-_HEADERS  = calc.hpp nodecontainer.hpp stack.hpp parser.hpp nativecmd.hpp cmdlookup.hpp
+FILENAMES = main nodecontainer nodeoperators stack parser nativecmd
+_HEADERS  = calc.hpp nodecontainer.hpp nodeoperators.hpp stack.hpp parser.hpp nativecmd.hpp cmdlookup.hpp
 
 DEBUGFLAGS   = -g -DDEBUG
 RELEASEFLAGS = -O3 -DRELEASE
@@ -14,6 +14,9 @@ CSTD = c++11
 
 LFLAGS   = -lcln -lginac
 CXXFLAGS = -Wall -Wpedantic
+
+SRCFILE = .cpp
+OUTFILE = .o
 
 OBJS   = $(patsubst %, $(BUILDDIR)/%.o,$(FILENAMES))
 SOURCE = $(patsubst %, %.cpp,$(FILENAMES))
@@ -31,7 +34,7 @@ all: $(OUT)
 $(OUT): $(OBJS)
 	$(CC) $(CXXFLAGS) -o $(BUILDDIR)/$@ $^ $(LFLAGS) -std=$(CSTD)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADER)
+$(BUILDDIR)/%$(OUTFILE): $(SRCDIR)/%$(SRCFILE) $(HEADER)
 	$(CC) $(CXXFLAGS) -c -o $@ $< -I$(INCLUDEDIR) -std=$(CSTD)
 
 clean:

@@ -16,20 +16,32 @@ it's meant to ultimately be a very simple API with some sort of user interface b
 
 it's supposed to be able to run on a microcontroller. Under the hood, it uses the GiNaC library for arbitrary precision, and some special numeric types and symbolic expressions. It's meant to be a very powerful calculator.
 
+when nodes are collapsing in an evaluation, this is the hierarchy:
+
+- TYPE_ERROR
+- TYPE_EX
+- TYPE_NUMERIC
+- TYPE_SYMBOL
+- TYPE_HOLD
+- TYPE_DELIM
+- TYPE_CMD
+- TYPE_EMPTY
+- TYPE_DELETABLE, TYPE_CUTCARD should both cause a crash.
+
 ## THIS is the ROADMAP 😎
 
-	[x] evaluate commands
-	[ ] stack commands
-	[ ] symbols
-	[ ] mix numerics with expressions
-	[ ] make undo work
-	[ ] add user macros
-	[ ] add lists 
-	[ ] (which work in commands)
-	[ ] error interface.
-		- outputs errors in a standard way
-		- describes the nature of the error alongside the discarded input which caused the error
-	[ ] support special parser configuration commands
-		- to evaluate automatically
-		- recall variables and availible memory and things
-		- change input/output syntax/format
+- [x] evaluate commands
+- [ ] stack commands
+- [ ] symbols
+- [ ] mix numerics with expressions
+- [ ] make undo work
+- [ ] add user macros
+- [ ] add lists 
+- [ ] (which work in commands)
+- [ ] error interface.
+	- outputs errors in a standard way
+	- describes the nature of the error alongside the discarded input which caused the error
+- [ ] support special parser configuration commands
+	- to evaluate automatically
+	- recall variables and availible memory and things
+	- change input/output syntax/format

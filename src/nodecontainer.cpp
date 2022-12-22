@@ -2,8 +2,22 @@
 using namespace std;
 using namespace GiNaC;
 
-Node::Node() {} // set_links_null(); }
-Node::Node(numeric * number) { set_numeric(number); }
+Node::Node() { set_links_null(); }
+Node::Node(numeric * number) { set_numeric(number); set_links_null(); }
+Node::Node(Node & old_node)
+{
+	links = old_node.links;
+	data = old_node.data;
+	if (old_node.data.type == TYPE_NUMERIC) { data.data_numeric = new numeric {*old_node.data.data_numeric}; }
+	else if (old_node.data.type == TYPE_SYMBOL) { data.data_symbol = new symbol {*old_node.data.data_symbol}; }
+	else if (old_node.data.type == TYPE_EX) { data.data_ex = new ex {*old_node.data.data_ex}; }
+}
+Node::~Node()
+{
+	if (data.type == TYPE_NUMERIC) { delete data.data_numeric; }
+	else if (data.type == TYPE_SYMBOL) { delete data.data_symbol; }
+	else if (data.type == TYPE_EX) { delete data.data_ex; }
+}
 void Node::set_links_null()
 {
 	links.down = nullptr;
@@ -19,7 +33,7 @@ nodeDataType Node::get_type()
 Node * Node::set_numeric(numeric * number)
 {
 	data.type = TYPE_NUMERIC;
-	data.data = number;
+	data.data_numeric = number;
 	return this;
 }
 Node * Node::set_cmd(Node * (*cmd)(Node *, NodeContainer *))
@@ -48,12 +62,13 @@ Node * Node::set_ex(ex * expr)
 	return this;
 }
 
-void Node::set_type(const nodeDataType type)
+Node * Node::set_type(const nodeDataType type)
 {
-	if (type == data.type) { return; }
-	if (type == TYPE_DELETABLE) { data.deletable = true; return; }
+	if (type == data.type) { return this; }
+	if (type == TYPE_DELETABLE) { data.deletable = true; return this; }
 	data.type = type;
 	if (type == TYPE_NUMERIC) { data.data = new numeric; }
+	return this;
 }
 void Node::set_type_all(const nodeDataType type)
 {
@@ -63,7 +78,9 @@ void Node::set_type_all(const nodeDataType type)
 }
 void Node::mark_empty_delete_data()
 {
-	if (data.type == TYPE_NUMERIC) { delete (numeric *) data.data; }
+	if (data.type == TYPE_NUMERIC) { delete data.data_numeric; }
+	if (data.type == TYPE_SYMBOL) { delete data.data_symbol; }
+	if (data.type == TYPE_EX) { delete data.data_ex; }
 	data.type = TYPE_EMPTY;
 }
 
@@ -73,7 +90,8 @@ ostringstream & Node::get_this_data_str(ostringstream & s)
 		s << NativeCMD::get_cmd_str(data.cmd);
 		return s;
 	}
-	if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
+	// if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
+	if (data.type == TYPE_NUMERIC) { s << dflt << *data.data_numeric; return s; }
 	if (data.type == TYPE_DELIM) {
 		s << NativeCMD::get_cmd_str(data.cmd);
 		return s;
@@ -112,6 +130,56 @@ string Node::get_data_str()
 	return get_data_str(s).str();
 }
 
+Node * inject_fn (Node * result, Node * op, cmdSymbol cmd)
+{
+	if (cmd == CMD_PLUS) { inject_addto(result, op); }
+	if (cmd == CMD_MINUS) { inject_minusto(result, op); }
+	// if (cmd == CMD_TIMES) { *result = *result * *op; }
+	// if (cmd == CMD_DIVIDE) { *result = *result / *op; }
+	return result;
+}
+
+//inject: interesting FP concept that applies a function to an accumulator, and each element in a list, and returns the accumulator
+Node * Node::inject_to(Node * result)
+{
+	if (data.type!=TYPE_CMD || links.down == nullptr) { return this; }
+	Node * next_op {links.down};
+	*result = *next_op;
+	cmdSymbol this_cmd { data.cmd_symbol };
+	while ((next_op = next_op->links.next)) {
+		if (next_op->data.type == TYPE_CMD)
+		{
+			Node int_result;
+			next_op->inject_to(&int_result);
+		} else {
+			inject_fn(result, next_op, this_cmd);
+		}
+	}
+	return result;
+}
+
+inline bool compare_types_to (nodeDataType cmp, nodeDataType t1, nodeDataType t2, nodeDataType t3)
+{
+	return (t1 == cmp || t2 == cmp || t3 == cmp);
+}
+
+// TODO: there needs to be a case in here for when there are multiple symbols to set type to ex
+nodeDataType Node::get_eval_type()
+{
+	if (!links.down) { return data.type; }
+	nodeDataType down_type { links.down->get_eval_type() };
+	nodeDataType next_type;
+	if (links.next) { next_type = links.next->get_eval_type(); } else { next_type = TYPE_EMPTY; } 
+	if (compare_types_to(TYPE_ERROR, data.type, down_type, next_type)) { return TYPE_ERROR; }
+	if (compare_types_to(TYPE_EX, data.type, down_type, next_type)) { return TYPE_EX; }
+	if (compare_types_to(TYPE_NUMERIC, data.type, down_type, next_type)) { return TYPE_NUMERIC; }
+	if (compare_types_to(TYPE_SYMBOL, data.type, down_type, next_type)) { return TYPE_SYMBOL; }
+	if (compare_types_to(TYPE_HOLD, data.type, down_type, next_type)) { return TYPE_HOLD; }
+	if (compare_types_to(TYPE_DELIM, data.type, down_type, next_type)) { return TYPE_DELIM; }
+	if (compare_types_to(TYPE_CMD, data.type, down_type, next_type)) { return TYPE_CMD; }
+	if (compare_types_to(TYPE_EMPTY, data.type, down_type, next_type)) { return TYPE_EMPTY; }
+	return TYPE_ERROR;
+}
 Node * Node::eval(NodeContainer * c)
 {
 	if (data.type != TYPE_CMD || links.down == nullptr) { return this; }

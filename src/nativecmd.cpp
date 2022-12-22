@@ -23,6 +23,21 @@ namespace NativeCMD
 		}
 		return nullptr;
 	}
+	cmdSymbol get_cmd_symbol (const string & s)
+	{
+		for (unsigned int i = 0; i < command_list.size(); ++i)
+		{
+			if (command_list[i].str == s) { return command_list[i].cmd_symbol; }
+		}
+		return CMD_NULL;
+	}
+
+	template<class T> inline T inject_plus (T * op1, T * op2)
+	{
+		return T(*op1 + *op2);
+	}
+
+
 	nodeDataType get_return_type (Node * n)
 	{
 		nodeDataType ret = TYPE_NUMERIC;
@@ -35,6 +50,14 @@ namespace NativeCMD
 			it = it->links.next;
 		}
 		return ret;
+	}
+	Node * cmd_inject (Node * n, NodeContainer * c, cmdSymbol * cmd)
+	{
+		// nodeDataType ret_type {get_return_type(n)};
+		n->set_deletable(true);
+		n = n->links.down;
+		// Node * acc/*umulator*/ {c->reserve_node()->set_type(ret_type)};
+		return n; //lint
 	}
 
 	Node * open_delim_curly (Node * n, NodeContainer * c) { return n; }
@@ -117,25 +140,30 @@ namespace NativeCMD
 			{ result->set_ex(new ex); return times_itr<ex>(result, n, c); }
 	}
 
-	template <class T> Node * divide_itr (Node * n, NodeContainer * c)
+	template <class T> Node * divide_itr (Node * result, Node * n, NodeContainer * c)
 	{
-		Node * result = c->reserve_node();
 		result->set_numeric(new numeric);
-		*(T *) result->data.data = *(T *) n->links.down->data.data;
+		n = n->links.down;
+		if (n->data.type == TYPE_CMD) { n = n->eval(c); }
+		*(T *) result->data.data = *(T *) n->data.data;
+		n->set_deletable(true);
 		n = n->links.down->links.next;
 		while (n)
 		{
+			if (n->data.type == TYPE_CMD) { n = n->eval(c); }
 			*(T *) result->data.data /= *(T *) n->data.data;
+			n->set_deletable(true);
 			n = n->links.next;
 		}
 		return result;
 	}
 	Node * divide (Node * n, NodeContainer * c) //copilot
 	{
+		Node * result = c->reserve_node();
 		nodeDataType ret_type = get_return_type(n);
 		if (ret_type == TYPE_NUMERIC)
-			{ return divide_itr<numeric>(n, c); }
+			{ return divide_itr<numeric>(result, n, c); }
 		else
-			{ return divide_itr<ex>(n, c); }
+			{ return divide_itr<ex>(result, n, c); }
 	}
 }

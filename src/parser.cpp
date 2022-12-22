@@ -39,6 +39,7 @@ namespace Parser
 		Node *(*ptr)(Node *, NodeContainer*) = NativeCMD::get_cmd_ptr(s);
 		if (ptr == nullptr) { return false; }
 		Node * n = stack.reserve_node()->set_cmd(ptr);
+		n->data.cmd_symbol = NativeCMD::get_cmd_symbol(s);
 		collect_cmd_ops(n, stack);
 		if (!n->links.down) { return false; }
 		stack.push_node(n);

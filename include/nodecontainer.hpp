@@ -11,7 +11,8 @@ struct NodeLinks
 	Node * next;
 };
 
-enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_EX, TYPE_HOLD, TYPE_CMD, TYPE_DELIM };
+enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_ERROR, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_EX, TYPE_HOLD, TYPE_CMD, TYPE_DELIM };
+enum cmdSymbol { CMD_NULL, CMD_PLUS, CMD_MINUS, CMD_TIMES, CMD_DIVIDE };
 
 struct NodeData
 {
@@ -20,7 +21,11 @@ struct NodeData
 	union {
 		void * data;
 		Node * (*cmd)(Node *, NodeContainer *);
+		GiNaC::numeric * data_numeric;
+		GiNaC::symbol * data_symbol;
+		GiNaC::ex * data_ex;
 	};
+	cmdSymbol cmd_symbol;
 };
 class Node
 {
@@ -28,9 +33,12 @@ class Node
 
 	std::string get_this_data_str ();
 	std::ostringstream & get_this_data_str (std::ostringstream & s);
+	// Node * inject_fn (Node * result, Node * op, cmdSymbol cmd);
 public:
 	Node();
 	Node(GiNaC::numeric * number);
+	Node(Node & old_node);
+	~Node();
 	NodeLinks links;
 	NodeData data;
 
@@ -46,7 +54,7 @@ public:
 	Node * set_symbol (const std::string & name);
 	Node * set_ex (GiNaC::ex * expr);
 
-	void set_type (const nodeDataType type);
+	Node * set_type (const nodeDataType type);
 	void set_type_all (const nodeDataType type);
 
 	void mark_empty_delete_data();
@@ -54,6 +62,9 @@ public:
 	std::string get_data_str();
 	std::ostringstream & get_data_str (std::ostringstream & s);
 
+	Node * inject_to (Node * result);
+
+	nodeDataType get_eval_type();
 	Node * eval(NodeContainer * c);
 };
 

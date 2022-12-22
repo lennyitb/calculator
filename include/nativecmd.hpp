@@ -7,6 +7,9 @@ namespace NativeCMD
 {
 	std::string get_cmd_str (Node * (*cmd)(Node *, NodeContainer *));
 	native_cmd get_cmd_ptr (const std::string & s);
+	cmdSymbol get_cmd_symbol (const std::string & s);
+
+	Node * cmd_inject (Node * n, NodeContainer * c, cmdSymbol * cmd);
 
 	Node * open_delim_curly (Node * n, NodeContainer * c);
 	Node * open_delim_square (Node * n, NodeContainer * c);

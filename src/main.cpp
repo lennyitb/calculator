@@ -10,9 +10,13 @@ int main()
 
 	Stack s {100};
 
+	cout << "test build- please input ( number number number plus" << endl;
+
+
 	while (true)
 	{
 		if (!Parser::parse_to(cin, s)) { break; }
+		cout << "okay thank you." << endl;
 		for (unsigned int i = s.depth(); i > 0; --i)
 		{
 			cout << i << ": " << s.get_level_ref(i)->get_data_str();

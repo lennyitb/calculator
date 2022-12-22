@@ -76,11 +76,15 @@ void Stack::record_history()
 
 void Stack::eval()
 {
-	Node * level = root_node_list.back();
-	Node * result = level->eval(&container);
-	if (level != result)
+	Node * level = root_node_list.back(); //record root node of level 1
+	// Node * result = level->eval(&container);
+	Node * result = reserve_node()->set_type(level->get_eval_type()); //when we eval it, create a result node and figure out what its type will be
+	level->inject_to(result); //apply inject function to level and use result as an accumulator
+	if (level != result) //replace level with result but only go to the trouble if they're different
 	{
 		root_node_list.back() = result;
 		level->set_type_all(TYPE_DELETABLE);
+	} else {
+		container.delete_all_from_root(result);
 	}
 }
