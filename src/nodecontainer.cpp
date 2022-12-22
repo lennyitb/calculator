@@ -68,6 +68,8 @@ Node * Node::set_type(const nodeDataType type)
 	if (type == TYPE_DELETABLE) { data.deletable = true; return this; }
 	data.type = type;
 	if (type == TYPE_NUMERIC) { data.data = new numeric; }
+	if (type == TYPE_SYMBOL) { data.data = new symbol; }
+	if (type == TYPE_EX) { data.data = new ex; }
 	return this;
 }
 void Node::set_type_all(const nodeDataType type)
@@ -132,29 +134,44 @@ string Node::get_data_str()
 
 Node * inject_fn (Node * result, Node * op, cmdSymbol cmd)
 {
+	if (result->data.type == TYPE_NUMERIC) { if (*result->data.data_numeric == 0) {*result->data.data_numeric = *op->data.data_numeric; return result; } }
+	if (result->data.type == TYPE_EX) {
+		if (*result->data.data_ex == 0) {
+			if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex = *op->data.data_numeric; }
+			else if (op->data.type == TYPE_EX) { *result->data.data_ex = *op->data.data_ex; }
+			else { result-> set_type(TYPE_ERROR);}
+		}
+		return result;
+	}
 	if (cmd == CMD_PLUS) { inject_addto(result, op); }
 	if (cmd == CMD_MINUS) { inject_minusto(result, op); }
-	// if (cmd == CMD_TIMES) { *result = *result * *op; }
-	// if (cmd == CMD_DIVIDE) { *result = *result / *op; }
+	if (cmd == CMD_TIMES) { inject_timesto(result, op); }
+	if (cmd == CMD_DIVIDE) { inject_divideto(result, op); }
 	return result;
 }
 
 //inject: interesting FP concept that applies a function to an accumulator, and each element in a list, and returns the accumulator
 Node * Node::inject_to(Node * result)
+//error for minus/times/divide commands because result is initialized to zero
+//i need to find a way to set result to the first element evaluation
 {
 	if (data.type!=TYPE_CMD || links.down == nullptr) { return this; }
+	result->set_type(get_eval_type());
 	Node * next_op {links.down};
-	*result = *next_op;
 	cmdSymbol this_cmd { data.cmd_symbol };
-	while ((next_op = next_op->links.next)) {
+
+	do {
+		// Node this_result; this_result.set_type(next_op->get_eval_type());
 		if (next_op->data.type == TYPE_CMD)
 		{
 			Node int_result;
+			int_result.set_type(next_op->get_eval_type());
 			next_op->inject_to(&int_result);
+			inject_fn(result, &int_result, this_cmd);
 		} else {
 			inject_fn(result, next_op, this_cmd);
 		}
-	}
+	} while ((next_op = next_op->links.next));
 	return result;
 }
 

@@ -2,7 +2,7 @@ FILENAMES = main nodecontainer nodeoperators stack parser nativecmd
 _HEADERS  = calc.hpp nodecontainer.hpp nodeoperators.hpp stack.hpp parser.hpp nativecmd.hpp cmdlookup.hpp
 
 DEBUGFLAGS   = -g -DDEBUG
-RELEASEFLAGS = -O3 -DRELEASE
+RELEASEFLAGS = -Ofast -DRELEASE
 
 BUILDDIR   = build
 SRCDIR     = src
