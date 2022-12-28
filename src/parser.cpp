@@ -4,6 +4,7 @@ using namespace GiNaC;
 
 namespace Parser
 {
+	Runtime * runtime_ptr = nullptr;
 	std::regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?$");
 	std::regex cmd_rgx("^[a-zA-Z]+$");
 	std::regex open_delim_rgx("^(\\(|\\[|\\{|<<)$");
@@ -39,15 +40,26 @@ namespace Parser
 		}
 		return n;
 	}
+	// // we're phasing out the whole function pointer as a symbol thing.
+	// bool parse_native_cmd_to(const string & s, Stack & stack)
+	// {
+	// 	//this syntax is really starting to get on my nerves.
+	// 	Node *(*ptr)(Node *, NodeContainer*){NativeCMD::get_cmd_ptr(s)};
+	// 	if (ptr == nullptr) { return false; }
+	// 	Node * n = stack.reserve_node()->set_cmd(ptr);
+	// 	n->data.cmd_symbol = NativeCMD::get_cmd_symbol(s);
+	// 	collect_cmd_ops(n, stack);
+	// 	if (!n->links.down) { return false; }
+	// 	stack.push_node(n);
+	// 	return true;
+	// }
 	bool parse_native_cmd_to(const string & s, Stack & stack)
 	{
-		//this syntax is really starting to get on my nerves.
-		Node *(*ptr)(Node *, NodeContainer*){NativeCMD::get_cmd_ptr(s)};
-		if (ptr == nullptr) { return false; }
-		Node * n = stack.reserve_node()->set_cmd(ptr);
-		n->data.cmd_symbol = NativeCMD::get_cmd_symbol(s);
+		cmdSymbol cmd_symbol = NativeCMD::get_cmd_symbol(s);
+		if (cmd_symbol == CMD_NULL) { return false; }
+		Node * n = stack.reserve_node()->set_cmd(cmd_symbol);
 		collect_cmd_ops(n, stack);
-		if (!n->links.down) { return false; }
+		if (!n->links.down) { stack.delete_all_from_root(n); return false; }
 		stack.push_node(n);
 		return true;
 	}
@@ -80,6 +92,7 @@ namespace Parser
 		}
 		return false;
 	}
+	void set_runtime(Runtime & r) { runtime_ptr = &r; }
 	bool parse_to(istream & is, Stack & stack)
 	{
 		string s;

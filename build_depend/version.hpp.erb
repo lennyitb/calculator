@@ -1,0 +1,36 @@
+<%  # this file will incriment the build number in version.json whenever it's run
+	require 'json';
+	class ::String; def justify; self + (' ' * ($max_key_length - self.length)) end end
+	class VersionInfo < Hash
+		def initialize (filename)
+			@whole_file_parse = JSON.parse File.read(filename)
+			super(); self.merge! @whole_file_parse['defines']
+			set_max_key_length; increment_build_no; set_version_str
+		end
+		def increment_build_no
+			self['BUILD_NUM'] = "%04d" % (self['BUILD_NUM'].to_i + 1).to_s
+			@whole_file_parse['defines'] = self
+			File.open('version.json', 'w') { |f| f.write JSON.pretty_generate(@whole_file_parse) }
+		end
+		def set_version_str
+			self.merge! 'VERSION_STR' => self['VERSION_MAJOR'].to_s << '.' << ("%02d" % self['VERSION_MINOR'].to_s)
+		end
+		def title_string; @whole_file_parse['header_file_title'] end
+		def file_warning; @whole_file_parse['header_file_warning'] end
+	private
+		@whole_file_parse = Hash.new
+		def set_max_key_length; $max_key_length = self.keys.map(&:length).max end
+	end
+
+	version_info = VersionInfo.new 'version.json'
+%>
+/* <%= version_info.title_string %>
+ * <%= version_info.file_warning %>
+ * this file is updated with every build. only include where neccesary to speed compilation. */
+
+#ifndef VERSION_H
+#define VERSION_H
+
+<% version_info.each do |key, value| %>#define <%= key.justify %>  "<%= value %>"
+<% end %>
+#endif

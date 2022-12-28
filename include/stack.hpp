@@ -11,16 +11,7 @@ struct HangingOpenDelim
 	inline bool does_exist() { return level ? true : false; }
 };
 
-// struct SymbolRecord
-// {
-// 	std::string name;
-// 	union realOrComplex {
-// 		GiNaC::realsymbol value;
-// 		GiNaC::symbol cvalue;
-// 	} value;
-// 	enum symbolType {REAL, COMPLEX} type;
-// 	SymbolRecord(std::string s, realOrComplex v, symbolType st) : name(name), value(v), type(st) {}
-// };
+
 
 class Stack
 {
@@ -40,6 +31,7 @@ public:
 
 	Node * reserve_node();
 	Node * reserve_node(GiNaC::numeric * number);
+	void delete_all_from_root(Node * n);
 	inline void push_node (Node * node) { root_node_list.push_back(node); }
 
 	Node * push_new();

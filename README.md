@@ -52,8 +52,8 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
 - [x] evaluate commands
 - [ ] stack commands
 	- THE stack commands I wish to support descending order:
-		- [ ] `swap`
-		- [ ] `drop`
+		- [x] `swap`
+		- [x] `drop`
 		- [ ] `rolln` / `unrolln` //haha swap, drop & roll lmao
 		- [ ] `roll` / `unroll`
 		- [ ] `rot` / `unrot`
@@ -71,6 +71,7 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
 - [ ] add lists (which work in commands)
 - [ ] allow partial evaluation for strange types like sequences
 - [ ] so I went with the 'vernacular' of referring to things in the code as 'commands' but I'm not sure if that's the best choice. I'm thinking of changing it to 'functions'.
+- [ ] there's a fair amount of refactoring to be done. My classes have far too many public declarations.
 - [ ] error interface.
 	- outputs errors in a standard way
 	- describes the nature of the error alongside the discarded input which caused the error
@@ -83,6 +84,8 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
 
 ## Current Known Bugs:
 
-- [ ] `0 17 times eval` results in `17`
+- [x] `0 17 times eval` results in `17`
 	- I think I might know this one. `17 0 times eval` works like a charm- there's something about my inject function that doesn't like setting `result->data` to `{0}`...
 - [ ] deeply nested trees crash in segmentation faults all the time
+- [ ] `7 2 minus eval` results in `-2`
+    - i really have no idea how this suddenly popped up after i made symbols a little closer to working. probably top priority to fix.

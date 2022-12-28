@@ -4,3 +4,8 @@ build/*
 calculatorv3.code-workspace
 
 include/nodedatatypes.hpp
+
+doc
+doc/*
+
+include/version.hpp

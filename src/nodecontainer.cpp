@@ -10,13 +10,13 @@ Node::Node(Node & old_node)
 	links = old_node.links;
 	data = old_node.data;
 	if (old_node.data.type == TYPE_NUMERIC) { data.data_numeric = new numeric {*old_node.data.data_numeric}; }
-	else if (old_node.data.type == TYPE_SYMBOL) { data.data_symbol = new symbol {*old_node.data.data_symbol}; }
+	else if (old_node.data.type == TYPE_SYMBOL) { data.data_symbol_record = old_node.data.data_symbol_record; }
 	else if (old_node.data.type == TYPE_EX) { data.data_ex = new ex {*old_node.data.data_ex}; }
 }
 Node::~Node()
 {
 	if (data.type == TYPE_NUMERIC) { delete data.data_numeric; }
-	else if (data.type == TYPE_SYMBOL) { delete data.data_symbol; }
+	// else if (data.type == TYPE_SYMBOL) { delete data.data_symbol; }
 	else if (data.type == TYPE_EX) { delete data.data_ex; }
 }
 void Node::set_links_null()
@@ -32,7 +32,7 @@ Node * Node::copy (Node * old_node)
 	links = old_node->links;
 	data = old_node->data;
 	if (old_node->data.type == TYPE_NUMERIC) { data.data_numeric = new numeric {*old_node->data.data_numeric}; }
-	else if (old_node->data.type == TYPE_SYMBOL) { data.data_symbol = new symbol {*old_node->data.data_symbol}; }
+	else if (old_node->data.type == TYPE_SYMBOL) { data.data_symbol_record = old_node->data.data_symbol_record; }
 	else if (old_node->data.type == TYPE_EX) { data.data_ex = new ex {*old_node->data.data_ex}; }
 	return this;
 }
@@ -52,6 +52,12 @@ Node * Node::set_cmd(Node * (*cmd)(Node *, NodeContainer *))
 {
 	data.type = TYPE_CMD;
 	data.cmd = cmd;
+	return this;
+}
+Node * Node::set_cmd(cmdSymbol cmd)
+{
+	data.type = TYPE_CMD;
+	data.cmd_symbol = cmd;
 	return this;
 }
 
@@ -117,7 +123,8 @@ void Node::set_type_all(const nodeDataType type)
 void Node::mark_empty_delete_data()
 {
 	if (data.type == TYPE_NUMERIC) { delete data.data_numeric; }
-	if (data.type == TYPE_SYMBOL) { delete data.data_symbol; }
+	// symbol allocation is now managed by Runtime class.
+	// if (data.type == TYPE_SYMBOL) { delete data.data_symbol; }
 	if (data.type == TYPE_EX) { delete data.data_ex; }
 	data.type = TYPE_EMPTY;
 }
@@ -250,7 +257,21 @@ Node * Node::eval(NodeContainer * c)
 }
 
 NodeContainer::NodeContainer (cunt size) { initialize(size); }
-NodeContainer::~NodeContainer() { delete[] container; }
+NodeContainer::~NodeContainer()
+{
+	// // // OKAY on second thought I already have a Node deconstructor defined so I will omit this pending evidence nodes aren't being deleted properly
+	// // this is a pretty low priority function anywho as a nodecontainer should exist for the entire lifecycle of the program in the typical use case
+
+	// // free all pointers stored by nodes within the container
+	// for (Node * i = container; i < container + container_size; ++i)
+	// {
+	// 	if (i->get_type() == TYPE_CUTCARD) { break; } //assume there will be no data after the cutcard is encountered
+	// 	i->mark_empty_delete_data(); //it's actually unneccesary to mark the nodes empty but I don't have a method to only delete the data
+	// }
+
+	// //finally free the container itself
+	delete[] container;
+}
 
 void NodeContainer::initialize (cunt size)
 {
@@ -262,6 +283,7 @@ void NodeContainer::initialize (cunt size)
 }
 bool NodeContainer::set_cut_card (Node * position)
 {
+	//seems like a silly check but the code will actually attempt to push the cutcard past the end of the container
 	if (position - container > container_size) { return false; }
 	position->data.type = TYPE_CUTCARD;
 	return true;

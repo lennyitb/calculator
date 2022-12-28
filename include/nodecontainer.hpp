@@ -3,6 +3,7 @@
 
 class Node;
 class NodeContainer;
+struct SymbolRecord;
 struct NodeLinks
 {
 	Node * up;
@@ -11,15 +12,19 @@ struct NodeLinks
 	Node * next;
 };
 
-enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_ERROR, TYPE_NUMERIC, TYPE_SYMBOL, TYPE_EX, TYPE_HOLD, TYPE_CMD, TYPE_DELIM, TYPE_LIST, TYPE_SEQ };
-enum cmdSymbol { CMD_NULL, CMD_PLUS, CMD_MINUS, CMD_TIMES, CMD_DIVIDE };
-enum delimType { DELIM_NULL, DELIM_OPEN_PAREN, DELIM_OPEN_CURLY, DELIM_OPEN_SQUARE, DELIM_OPEN_ANGLE, DELIM_CLOSE_PAREN, DELIM_CLOSE_CURLY, DELIM_CLOSE_SQUARE, DELIM_CLOSE_ANGLE };
+enum nodeDataType { TYPE_EMPTY, TYPE_DELETABLE, TYPE_CUTCARD, TYPE_ERROR, TYPE_NUMERIC,
+                    TYPE_SYMBOL, TYPE_EX, TYPE_HOLD, TYPE_CMD, TYPE_DELIM, TYPE_LIST, TYPE_SEQ, TYPE_MACRO };
+
+enum cmdSymbol    { CMD_NULL, CMD_PLUS, CMD_MINUS, CMD_TIMES, CMD_DIVIDE };
+
+enum delimType    { DELIM_NULL, DELIM_OPEN_PAREN, DELIM_OPEN_CURLY, DELIM_OPEN_SQUARE, DELIM_OPEN_ANGLE,
+                    DELIM_CLOSE_PAREN, DELIM_CLOSE_CURLY, DELIM_CLOSE_SQUARE, DELIM_CLOSE_ANGLE };
 
 struct NodeData
 {
 	nodeDataType type;
 	bool deletable {false};
-	union {
+	union { //TODO get rid of the dumb function pointer and put cmd_symbol in the union instead
 		void * data;
 		Node * (*cmd)(Node *, NodeContainer *);
 		delimType delim;
@@ -28,10 +33,12 @@ struct NodeData
 		GiNaC::ex * data_ex;
 	};
 	cmdSymbol cmd_symbol;
+	SymbolRecord * data_symbol_record; //ALSO TODO replace any data_symbol reference with SymbolRecord code
 };
 class Node
 {
-	// friend class NodeContainer;
+	friend class NodeContainer;
+	// void delete_data();
 
 	std::string get_this_data_str ();
 	std::ostringstream & get_this_data_str (std::ostringstream & s);
@@ -53,6 +60,7 @@ public:
 
 	Node * set_numeric (GiNaC::numeric * number);
 	Node * set_cmd (Node * (*cmd)(Node *, NodeContainer *));
+	Node * set_cmd (cmdSymbol cmd);
 	Node * set_delim (const std::string & delim);
 	Node * set_symbol (const std::string & name);
 	Node * set_ex (GiNaC::ex * expr);

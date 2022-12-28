@@ -42,6 +42,7 @@ HangingOpenDelim Stack::get_next_hanging_open_delim()
 
 Node * Stack::reserve_node() { return container.reserve_node(); }
 Node * Stack::reserve_node(numeric * number) { return container.reserve_node(number); }
+void Stack::delete_all_from_root(Node * n) { container.delete_all_from_root(n); }
 
 Node * Stack::push_new()
 {

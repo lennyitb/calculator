@@ -4,7 +4,7 @@
 /**************************************\
 \*                                    */
 /*     Welcome to my header file.     *\
-\*           made by Lenny            */
+\*           made by  Lenny           */
 /*                                    *\
 \**************************************/
 
@@ -29,6 +29,7 @@ typedef const unsigned int cunt;
 #include "nodecontainer.hpp"
 #include "nodeoperators.hpp"
 #include "stack.hpp"
+#include "runtime.hpp"
 #include "nativecmd.hpp"
 #include "parser.hpp"
 

@@ -1,14 +1,19 @@
 #include "calc.hpp"
+#include "version.hpp"
+
 using namespace std;
 
 /// The main function.
 int main()
 {
+	cout << FULL_NAME << " v" << VERSION_STR << " build " << BUILD_NUM << endl;
 	#ifdef DEBUG
 	cout << "this is a debug build." << endl;
 	#endif
 
+
 	Stack s {100};
+	Runtime r; Parser::set_runtime(r); //may rethink this. The idea is that theoretically, there could be multiple stacks, but only one 'runtime'.
 
 	while (true)
 	{

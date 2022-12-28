@@ -1,0 +1,10 @@
+{
+  "defines": {
+    "FULL_NAME": "Lenny's Calculator",
+    "BUILD_NUM": "0084",
+    "VERSION_MAJOR": 0,
+    "VERSION_MINOR": 1
+  },
+  "header_file_title": "Version increment script- generated file",
+  "header_file_warning": "Warning: changes to this file will be overwritten automatically"
+}
