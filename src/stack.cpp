@@ -90,19 +90,23 @@ void Stack::eval()
 	}
 }
 
-void Stack::swap()
+bool Stack::swap()
 {
+	if (depth() < 2) { return false; }
 	record_history();
 	vector<Node *>::iterator it { (root_node_list.end() - 2) };
 	Node * n { *it };
 	root_node_list.erase(it);
 	root_node_list.push_back(n);
+	return true;
 }
-void Stack::drop()
+bool Stack::drop()
 {
+	if (depth() < 1) { return false; }
 	record_history();
 	root_node_list.back()->set_type_all(TYPE_DELETABLE);
 	root_node_list.pop_back();
+	return true;
 }
 cunt Stack::get_cunt()
 {
@@ -111,20 +115,28 @@ cunt Stack::get_cunt()
 		return stoi(num_s);
 	}	return 0;
 }
-void Stack::rolln()
+bool Stack::rolln()
 {
+	if (depth() < 1) { return false; }
+	cunt my_cunt = get_cunt();
+	if (depth() < my_cunt) { return false; }
 	record_history();
 	Node * n { root_node_list.back() };
 	n->set_type_all(TYPE_DELETABLE);
 	root_node_list.pop_back();
-	root_node_list.insert(root_node_list.end() - get_cunt(), n);
+	root_node_list.insert(root_node_list.end() - my_cunt, n);
+	return true;
 }
-void Stack::unrolln()
+bool Stack::unrolln()
 {
+	if (depth() < 1) { return false; }
+	cunt my_cunt = get_cunt();
+	if (depth() < my_cunt) { return false; }
 	record_history();
-	vector<Node *>::iterator it { root_node_list.end() - get_cunt() };
+	vector<Node *>::iterator it { root_node_list.end() - my_cunt };
 	Node * n { *it };
 	n->set_type_all(TYPE_DELETABLE);
 	root_node_list.erase(it);
 	root_node_list.push_back(n);
+	return true;
 }

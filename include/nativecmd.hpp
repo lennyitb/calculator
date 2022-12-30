@@ -5,7 +5,8 @@ typedef Node * (*native_cmd)(Node *, NodeContainer *);
 
 namespace NativeCMD
 {
-	std::string get_cmd_str (Node * (*cmd)(Node *, NodeContainer *));
+	std::string get_cmd_str (Node * (*cmd)(Node *, NodeContainer *)); //deprecated and will soon be removed
+	std::string get_cmd_str (cmdSymbol cmd);
 	native_cmd get_cmd_ptr (const std::string & s);
 	cmdSymbol get_cmd_symbol (const std::string & s);
 

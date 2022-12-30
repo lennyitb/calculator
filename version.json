@@ -1,10 +1,21 @@
 {
+  "header_info": [
+    "Version increment script- generated file",
+    "Warning: changes to this file will be overwritten automatically",
+    "this file is updated with every build. only include where neccesary to speed compilation."
+  ],
   "defines": {
     "FULL_NAME": "Lenny's Calculator",
-    "BUILD_NUM": "0084",
+    "BUILD_NUM": "00264",
     "VERSION_MAJOR": 0,
-    "VERSION_MINOR": 1
+    "VERSION_MINOR": 1,
+    "VERSION_STR": "0.01",
+    "BUILD_DATE": "2022-12-30",
+    "POLITE": ""
   },
-  "header_file_title": "Version increment script- generated file",
-  "header_file_warning": "Warning: changes to this file will be overwritten automatically"
+  "build_num_format_string": "%05d",
+  "full_version_format_string": "%02d",
+  "build_date_format_string": "%Y-%m-%d",
+  "header_guard": true,
+  "polite": true
 }

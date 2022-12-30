@@ -46,12 +46,12 @@ public:
 	void eval();
 
 
-	void swap();
-	void drop();
+	bool swap();
+	bool drop();
 	//TODO make these return some kind of error later if n is out of bounds
 	cunt get_cunt();
-	void rolln();
-	void unrolln();
+	bool rolln();
+	bool unrolln();
 };
 
 #endif

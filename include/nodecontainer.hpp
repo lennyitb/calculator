@@ -73,6 +73,7 @@ public:
 	std::string get_data_str();
 	std::ostringstream & get_data_str (std::ostringstream & s);
 
+	Node * new_inject_to (Node * result);
 	Node * inject_to (Node * result);
 
 	nodeDataType get_eval_type();

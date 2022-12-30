@@ -8,8 +8,15 @@ BUILDDIR    = build
 SRCDIR      = src
 INCLUDEDIR  = include
 OUT         = bin
-VSCRIPTPATH = build_depend/version.hpp.erb
-VFILEPATH   = include/version.hpp
+OUTPATH     = $(BUILDDIR)/$(OUT)
+
+VFILE       = version
+VDEPEND     = main
+DEPENDDIR   = build_depend
+
+VSCRIPTPATH = $(DEPENDDIR)/$(VFILE)$(HDRFILE)$(ERBFILE)
+VFILEPATH   = $(INCLUDEDIR)/$(VFILE)$(HDRFILE)
+VDEPENDPATH = $(BUILDDIR)/$(VDEPEND)$(OUTFILE)
 
 CC   = g++
 CSTD = c++11
@@ -19,32 +26,34 @@ CXXFLAGS = -Wall -Werror -Wpedantic
 
 SRCFILE  = .cpp
 OUTFILE  = .o
+HDRFILE  = .hpp
+ERBFILE  = .erb
+
+.PHONY: makefile all inc_version clean debug release cleandebug cleanrelease
 
 debug: CXXFLAGS += $(DEBUGFLAGS)
-debug: $(OUT)
+debug: all
 release: CXXFLAGS += $(RELEASEFLAGS)
-release: $(OUT)
+release: all
 cleandebug: clean debug
 cleanrelease: clean release
+
+all: $(OUTPATH)
 
 OBJS   = $(patsubst %, $(BUILDDIR)/%$(OUTFILE),$(FILENAMES))
 SOURCE = $(patsubst %, %$(SRCFILE),$(FILENAMES))
 HEADER = $(patsubst %, $(INCLUDEDIR)/%,$(_HEADERS))
 
-.PHONY: inc_version clean
+$(OUTPATH): $(OBJS) | $(VDEPENDPATH)
+	$(CC) $(CXXFLAGS) -o $@ $^ $(LFLAGS) -std=$(CSTD)
 
-all: $(OUT)
-
-$(OUT): $(OBJS) | build/main.o
-	$(CC) $(CXXFLAGS) -o $(BUILDDIR)/$@ $^ $(LFLAGS) -std=$(CSTD)
-
-build/main.o: inc_version
+$(VDEPENDPATH): inc_version
 
 $(BUILDDIR)/%$(OUTFILE): $(SRCDIR)/%$(SRCFILE) $(HEADER)
 	$(CC) $(CXXFLAGS) -c -o $@ $< -I$(INCLUDEDIR) -std=$(CSTD)
 
 inc_version:
-	erb build_depend/version.hpp.erb | tee include/version.hpp
+	erb -T '-' $(VSCRIPTPATH) > $(VFILEPATH)
 
 clean:
 	rm -f $(OBJS) $(OUT)

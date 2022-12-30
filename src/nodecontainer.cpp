@@ -132,7 +132,7 @@ void Node::mark_empty_delete_data()
 ostringstream & Node::get_this_data_str(ostringstream & s)
 {
 	if (data.type == TYPE_CMD) {
-		s << NativeCMD::get_cmd_str(data.cmd);
+		s << NativeCMD::get_cmd_str(data.cmd_symbol);
 		return s;
 	}
 	// if (data.type == TYPE_NUMERIC) { s << dflt << *(numeric *) data.data; return s; }
@@ -177,15 +177,6 @@ string Node::get_data_str()
 
 Node * inject_fn (Node * result, Node * op, cmdSymbol cmd)
 {
-	// if (result->data.type == TYPE_NUMERIC) { if (*result->data.data_numeric == 0) {*result->data.data_numeric = *op->data.data_numeric; return result; } }
-	// if (result->data.type == TYPE_EX) {
-	// 	if (*result->data.data_ex == 0) {
-	// 		if (op->data.type == TYPE_NUMERIC) { *result->data.data_ex = *op->data.data_numeric; }
-	// 		else if (op->data.type == TYPE_EX) { *result->data.data_ex = *op->data.data_ex; }
-	// 		else { result-> set_type(TYPE_ERROR);}
-	// 	}
-	// 	// return result;
-	// }
 	if (cmd == CMD_PLUS) { inject_addto(result, op); }
 	if (cmd == CMD_MINUS) { inject_minusto(result, op); }
 	if (cmd == CMD_TIMES) { inject_timesto(result, op); }
@@ -199,7 +190,7 @@ Node * Node::inject_to(Node * result)
 //i need to find a way to set result to the first element evaluation
 {
 	// if it's not a command it's a leaf, and is considered aleady evaluated
-	// but it needs to be copied into result memory management
+	// but it needs to be copied into result for memory management
 	if (data.type!=TYPE_CMD || links.down == nullptr)
 	{
 		result->copy(this);
@@ -212,7 +203,7 @@ Node * Node::inject_to(Node * result)
 	//evaluate first operand, then set result to that
 	next_op->inject_to(result);
 	//iterate over every other operand, evaluating it and applying the function to the result
-	do {
+	while ((next_op = next_op->links.next)) {
 		if (next_op->data.type == TYPE_CMD)
 		{
 			Node int_result;
@@ -222,7 +213,30 @@ Node * Node::inject_to(Node * result)
 		} else {
 			inject_fn(result, next_op, data.cmd_symbol);
 		}
-	} while ((next_op = next_op->links.next));
+	} 
+	return result;
+}
+
+Node * Node::new_inject_to (Node * result)
+{
+	// copy self into result and quit if i'm not a command
+	if (data.type!=TYPE_CMD || links.down == nullptr)
+	{
+		result->copy(this);
+		set_deletable(true);
+		return result;
+	}
+	nodeDataType result_type { get_eval_type() };
+	result->set_type(result_type);
+	// go down and walk over every next to see if there's a command 
+	// set result to down->inject_to()
+	Node * next_op { links.down };
+	next_op->inject_to(result);
+	// call inject_fn on result and every down->next
+	// while ((next_op = next_op->links.next))
+	// {
+
+	// }
 	return result;
 }
 
@@ -231,7 +245,6 @@ inline bool compare_types_to (nodeDataType cmp, nodeDataType t1, nodeDataType t2
 	return (t1 == cmp || t2 == cmp || t3 == cmp);
 }
 
-// TODO: there needs to be a case in here for when there are multiple symbols to set type to ex
 nodeDataType Node::get_eval_type()
 {
 	if (!links.down) { return data.type; }
@@ -240,7 +253,8 @@ nodeDataType Node::get_eval_type()
 	if (links.next) { next_type = links.next->get_eval_type(); } else { next_type = TYPE_EMPTY; } 
 
 	if (compare_types_to(TYPE_ERROR, data.type, down_type, next_type)) { return TYPE_ERROR; }
-	if (compare_types_to(TYPE_EX, data.type, down_type, next_type)) { return TYPE_EX; }
+	// multiple symbols should return an ex
+	if (compare_types_to(TYPE_EX, data.type, down_type, next_type) || (next_type == TYPE_SYMBOL && down_type == TYPE_SYMBOL)) { return TYPE_EX; }
 	if (compare_types_to(TYPE_NUMERIC, data.type, down_type, next_type)) { return TYPE_NUMERIC; }
 	if (compare_types_to(TYPE_SYMBOL, data.type, down_type, next_type)) { return TYPE_SYMBOL; }
 	if (compare_types_to(TYPE_HOLD, data.type, down_type, next_type)) { return TYPE_HOLD; }
@@ -250,6 +264,7 @@ nodeDataType Node::get_eval_type()
 
 	return TYPE_ERROR;
 }
+// depricated
 Node * Node::eval(NodeContainer * c)
 {
 	if (data.type != TYPE_CMD || links.down == nullptr) { return this; }

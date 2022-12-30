@@ -1,0 +1,21 @@
+<%
+	$types = [ "TYPE_ERROR", "TYPE_EX", "TYPE_NUMERIC", "TYPE_SYMBOL", "TYPE_HOLD", "TYPE_DELIM", "TYPE_CMD", "TYPE_EMPTY"]
+%>
+
+#ifndef RESOLVE_TYPE_H
+#define RESOLVE_TYPE_H
+
+nodeDataType Node::get_eval_type()
+{
+	if (!links.down) { return data.type;}
+	nodeDataType down_type = links.down->get_eval_type();
+	nodeDataType next_type = links.next ? links.next->get_eval_type() : TYPE_EMPTY;
+	if (down_type == TYPE_ERROR || next_type == TYPE_EMPTY) { return TYPE_EMPTY; }
+
+	<% $types.each do |type|
+	%>if (compare_types_to(<%= type %>, data.type, down_type, next_type)) { return <%= type %>; }
+	<% end %>
+	return TYPE_ERROR;
+}
+
+#endif

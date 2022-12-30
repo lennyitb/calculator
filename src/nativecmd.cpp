@@ -7,11 +7,19 @@ using namespace CMDLookup;
 
 namespace NativeCMD
 {
-	string get_cmd_str (Node * (*cmd)(Node *, NodeContainer *))
+	string get_cmd_str (Node * (*cmd)(Node *, NodeContainer *)) // deprecated and will soon be removed
 	{
 		for (unsigned int i = 0; i < command_list.size(); ++i)
 		{
 			if (command_list[i].cmd == cmd) { return command_list[i].str; }
+		}
+		return ERROR_MSG;
+	}
+	string get_cmd_str (cmdSymbol cmd)
+	{
+		for (unsigned int i = 0; i < command_list.size(); ++i)
+		{
+			if (command_list[i].cmd_symbol == cmd) { return command_list[i].str; }
 		}
 		return ERROR_MSG;
 	}

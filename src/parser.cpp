@@ -5,7 +5,7 @@ using namespace GiNaC;
 namespace Parser
 {
 	Runtime * runtime_ptr = nullptr;
-	std::regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?$");
+	std::regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?[.]?$");
 	std::regex cmd_rgx("^[a-zA-Z]+$");
 	std::regex open_delim_rgx("^(\\(|\\[|\\{|<<)$");
 	std::regex explicit_symbol_rgx("^'[a-zA-Z]+'?$");
@@ -65,41 +65,52 @@ namespace Parser
 	}
 	
 
-	bool parse_word_to(const string & s, Stack & stack)
+	errorMessage parse_word_to(const string & s, Stack & stack)
 	{
+		errorMessage msg { STATUS_OK, s };
 		if (s == "eval")
 		{
 			stack.eval();
-			return true;
+			return msg;
 		}
 
 		if(regex_match(s,numeric_rgx))
 		{
 			stack.push_new()->set_numeric(new numeric {s.c_str()});
-			return true;
+			return msg;
 		}
-		if (s == "swap") { stack.swap(); return true; }
-		if (s == "drop") { stack.drop(); return true; }
-		if (s == "rolln") { stack.rolln(); return true; }
+		if (s == "swap") { if (stack.swap()) { return msg; } else { msg.status = STATUS_UNKNOWN_ERROR; return msg; } }
+		if (s == "drop") { if (stack.drop()) { return msg; } else { msg.status = STATUS_UNKNOWN_ERROR; return msg; } }
+		if (s == "rolln") { if (stack.rolln()) { return msg; } else { msg.status = STATUS_UNKNOWN_ERROR; return msg; } }
+		if (s == "exit")
+		{
+			msg.status = STATUS_EXIT;
+			return msg;
+		}
 		if(regex_match(s,cmd_rgx))
 		{
-			return parse_native_cmd_to(s, stack);
+			if(!parse_native_cmd_to(s, stack)) { msg.status = STATUS_UNKNOWN_TOKEN; }
+			return msg;
 		}
 		if (regex_match(s, open_delim_rgx))
 		{
 			stack.push_new()->set_delim(s);
-			return true;
+			return msg;
 		}
-		return false;
+		msg.status = STATUS_UNKNOWN_TOKEN;
+		return msg;
 	}
 	void set_runtime(Runtime & r) { runtime_ptr = &r; }
-	bool parse_to(istream & is, Stack & stack)
+	errorMessage parse_to(istream & is, Stack & stack)
 	{
 		string s;
+		errorMessage result;
 		do {
 			is >> s;
-			if (!parse_word_to(s, stack)) {return false;}
+			result = parse_word_to(s, stack);
+			if (!result)
+				{ return result; }
 		} while (is.peek() != PARSE_EOF);
-		return true;
+		return result;
 	}
 }

@@ -1,0 +1,37 @@
+<%
+
+$operators = {
+	"addto" => "+=",
+	"minusto" => "-=",
+	"timesto" => "*=",
+	"divideto" => "/="
+}
+$types = {
+	"TYPE_NUMERIC" => "data.data_numeric",
+	"TYPE_SYMBOL" => "data.data_symbol_record->rvalue",
+	"TYPE_EX" => "data.data_ex"
+}
+
+%>
+
+// // // Generated file: consult build_depend/nodeoperators.cpp.erb for further advice // // //
+
+#include "calc.hpp"
+using namespace GiNaC;
+
+namespace NodeInjectOperator
+{<% $operators.each do |key, value| %>
+	Node * inject_<%= key %> (Node * result, Node * op)
+	{
+		if (result->data.type == TYPE_NUMERIC && op->data.type == TYPE_NUMERIC)	{
+			*result->data.data_numeric <%= value %> *op->data.data_numeric;
+			return result;
+		} else if (result->data.type == TYPE_EX) {
+			<% $types.each do |type_sym, type_ptr| %><%= type_sym != "TYPE_NUMERIC" ? "else " : ""
+			%>if (op->data.type == <%= type_sym %>) { *result->data.data_ex <%= value %> *op->data.<%= type_ptr %>; }
+			<%end%>return result;
+		}
+		return result->set_type(TYPE_ERROR);
+	}
+<% end %>}
+
