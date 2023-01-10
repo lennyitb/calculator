@@ -55,6 +55,7 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
     - [ ] `rolln` / `unrolln` //haha swap, drop & roll lmao
     - [ ] `explode` / `assemble` this is the best idea behind the dream of this project
       - alright so when we get an explode we take the root node of level one, if it's a command, we push all the operands onto the stack, then we assemble a macro with its only instruction being the command and push that one the stack last. It will look something like `<< + >>`. an `eval` will evaluate the macro and revert the stack to its original state.
+      - of course i will need macros in order to do this...
       - also, i'm thinking of an `explodeall` command that recursively breaks an entire expression into their own levels of the stack. this command would leave a special delimeter on the stack to mark the end of the expression, so that it can be collected back into a single expression with `assemble`.
     - [ ] `roll` / `unroll`
     - [ ] `rot` / `unrot`
@@ -62,7 +63,9 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
     - [ ] `dupn`
     - [ ] `yank`
     - [ ] and guys just um let me know in the comments down below if you think of any more. don't forget to like and subscribe.
+- [x] recognize and parse 'stuck' delimiters like `(1 2`
 - [ ] symbols
+- [ ] directories that can be navigated, and which defined symbols can be stored to
 - [ ] patch allll the memory leaks
   - I believe we're making excellent progress in regards to this issue.
 - [x] mix numerics with expressions //weird thing for past Lenny to write- it pretty much works out of the box right now and there's pretty much no way to test it without having symbols
@@ -83,11 +86,15 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
   - change input/output syntax/format
   - global numeric mode
 - [ ] add make targets for web assembly and embedded compilation. Also build GiNaC from source.
+- [ ] ability to save definitions (like the 50g 'filesystem') and write that to file or export as json to front end
+- [ ] don't quit without saving changes??
 
 ## Current Known Bugs
 
 - [x] `0 17 times eval` results in `17`
   - I think I might know this one. `17 0 times eval` works like a charm- there's something about my inject function that doesn't like setting `result->data` to `{0}`...
 - [ ] deeply nested trees crash in segmentation faults all the time
+  - I haven't been able to observe this behavior lately, but I haven't really gone out of my way to elicit it either.
 - [x] `7 2 minus eval` results in `-2`
   - i really have no idea how this suddenly popped up after i made symbols a little closer to working. probably top priority to fix.
+- [ ] when i eval something, then apply a command to it, it has this weird undo effect. not the hugest bug in the world since it re-evaluates but it's one of those tricky pointer arithmetic things i haven't worked all the way out yet.
