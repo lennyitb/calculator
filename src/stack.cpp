@@ -112,8 +112,15 @@ cunt Stack::get_cunt()
 {
 	const string num_s { take()->get_data_str() };
 	if (regex_match(num_s, unsigned_int_rgx)) {
-		return stoi(num_s);
-	}	return 0;
+		cunt num = stoi(num_s);
+		// // I want to have this ifdef directive but I would need to include version.hpp here
+		// // which i don't really wanna do because it would slow down compilation
+		// #ifdef ZERO_MODIFY_WHOLE_STACK
+			if (num == 0) { return depth(); }
+		// #endif
+		return num;
+	}
+	return 0;
 }
 bool Stack::rolln()
 {

@@ -9,3 +9,7 @@ doc
 doc/*
 
 include/version.hpp
+
+build_depend/*
+!build_depend/version_script.rb
+!build_depend/version.hpp.erb

@@ -1,6 +1,12 @@
 #include "calc.hpp"
 #include "cmdlookup.hpp"
 
+// i previously had the idea to use function pointers as symbols to represent commands and delims
+// i thought that was neat because nodes kinda just evaluate their own data
+// the syntax is ridiculous. the standards compliance is dubious. the performance is questionable.
+// the compiler has no fuck*** clue what i'm trying to do
+// most of this is already depricated and will soon be removed
+
 using namespace std;
 using namespace GiNaC;
 using namespace CMDLookup;

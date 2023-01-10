@@ -20,7 +20,12 @@ class VersionInfo < Hash
 
 	def initialize (filename)
 		@whole_file_parse = JSON.parse File.read(filename)
-		super(); self.merge! @whole_file_parse['defines']
+		defines = @whole_file_parse['defines']
+		if @whole_file_parse['define_case'] == 'SCREAMING_SNAKE' # the only case version_script.rb knows how to handle
+			defines.transform_keys! { |key| key.gsub(/ /, '_').upcase }
+		end
+		# super(); self.merge! @whole_file_parse['defines']
+		super(); self.merge! defines
 		@header_info = @whole_file_parse['header_info']
 		@info_size = @header_info.size - 1
 		set_max_length; increment_build_num; set_build_date; set_version_str; set_politeness; update_version_json; quotify

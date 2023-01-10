@@ -1,18 +1,23 @@
 {
+  "json_info": [
+    "THIS file is meant to be modified, although it does carry a second warning message which is used by the script"
+  ],
   "header_info": [
     "Version increment script- generated file",
-    "Warning: changes to this file will be overwritten automatically",
-    "this file is updated with every build. only include where neccesary to speed compilation."
+    "Warning: consult build_depend/version.hpp.erb for any changes to this file which you do not want overwritten.",
+    "this file is updated with every build. only include where necessary to speed compilation."
   ],
   "defines": {
     "FULL_NAME": "Lenny's Calculator",
-    "BUILD_NUM": "00264",
+    "BUILD_NUM": "00326",
     "VERSION_MAJOR": 0,
     "VERSION_MINOR": 1,
     "VERSION_STR": "0.01",
-    "BUILD_DATE": "2022-12-30",
+    "BUILD_DATE": "2023-01-10",
+    "ZERO_MODIFY_WHOLE_STACK": "",
     "POLITE": ""
   },
+  "define_case": "SCREAMING_SNAKE",
   "build_num_format_string": "%05d",
   "full_version_format_string": "%02d",
   "build_date_format_string": "%Y-%m-%d",

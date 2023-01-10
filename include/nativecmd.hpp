@@ -1,6 +1,11 @@
 #ifndef NATIVECMD_H
 #define NATIVECMD_H
 
+// i previously had the idea to use function pointers as symbols to represent commands and delims
+// i thought that was neat because nodes kinda just evaluate their own data
+// the syntax is ridiculous. the standards compliance is dubious. the performance is questionable.
+// most of this is already deprecated and will soon be removed
+
 typedef Node * (*native_cmd)(Node *, NodeContainer *);
 
 namespace NativeCMD

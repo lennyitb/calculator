@@ -8,6 +8,7 @@ struct HangingOpenDelim
 	HangingOpenDelim() : d_type {DELIM_NULL}, level {0} {}
 	HangingOpenDelim(const delimType d, const unsigned int l) : d_type {d}, level {l} {}
 	
+	//TODO change this to operator bool
 	inline bool does_exist() { return level ? true : false; }
 };
 

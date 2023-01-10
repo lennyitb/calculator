@@ -15,6 +15,7 @@ VDEPEND     = main
 DEPENDDIR   = build_depend
 
 VSCRIPTPATH = $(DEPENDDIR)/$(VFILE)$(HDRFILE)$(ERBFILE)
+VSCRPTREQPATH = $(DEPENDDIR)/version_script.rb
 VFILEPATH   = $(INCLUDEDIR)/$(VFILE)$(HDRFILE)
 VDEPENDPATH = $(BUILDDIR)/$(VDEPEND)$(OUTFILE)
 
@@ -29,7 +30,7 @@ OUTFILE  = .o
 HDRFILE  = .hpp
 ERBFILE  = .erb
 
-.PHONY: makefile all inc_version clean debug release cleandebug cleanrelease
+.PHONY: makefile all clean debug release cleandebug cleanrelease
 
 debug: CXXFLAGS += $(DEBUGFLAGS)
 debug: all
@@ -40,20 +41,22 @@ cleanrelease: clean release
 
 all: $(OUTPATH)
 
-OBJS   = $(patsubst %, $(BUILDDIR)/%$(OUTFILE),$(FILENAMES))
-SOURCE = $(patsubst %, %$(SRCFILE),$(FILENAMES))
-HEADER = $(patsubst %, $(INCLUDEDIR)/%,$(_HEADERS))
+OBJS    = $(patsubst %, $(BUILDDIR)/%$(OUTFILE),$(FILENAMES))
+SOURCE  = $(patsubst %, %$(SRCFILE),$(FILENAMES))
+SRCPATH = $(patsubst %, $(SRCDIR)/%,$(SOURCE))
+HEADER  = $(patsubst %, $(INCLUDEDIR)/%,$(_HEADERS))
 
-$(OUTPATH): $(OBJS) | $(VDEPENDPATH)
+$(OUTPATH): $(OBJS)
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LFLAGS) -std=$(CSTD)
 
-$(VDEPENDPATH): inc_version
-
-$(BUILDDIR)/%$(OUTFILE): $(SRCDIR)/%$(SRCFILE) $(HEADER)
+$(BUILDDIR)/%$(OUTFILE): $(SRCDIR)/%$(SRCFILE) $(HEADER) | inc_version
 	$(CC) $(CXXFLAGS) -c -o $@ $< -I$(INCLUDEDIR) -std=$(CSTD)
 
-inc_version:
+inc_version: $(VFILEPATH)
+
+$(VFILEPATH): $(SRCPATH) $(HEADER) $(VSCRIPTPATH) $(VSCRPTREQPATH)
 	erb -T '-' $(VSCRIPTPATH) > $(VFILEPATH)
 
 clean:
 	rm -f $(OBJS) $(OUT)
+	erb -T '-' $(VSCRIPTPATH) > $(VFILEPATH)

@@ -5,15 +5,25 @@ using namespace GiNaC;
 namespace Parser
 {
 	Runtime * runtime_ptr = nullptr;
+	//match all different kinds of numeric input
 	std::regex numeric_rgx("^[+-]?([0-9]*[.])?[0-9]+([eE][+-]?[0-9]+)?[.]?$");
+	//match words
 	std::regex cmd_rgx("^[a-zA-Z]+$");
+	//match ( { [ <<
 	std::regex open_delim_rgx("^(\\(|\\[|\\{|<<)$");
+	//match an open delim that's `stuck` to something else
+	//... and capture the stuck things so they can be parsed separately
+	std::regex stuck_delim_rgx("^(\\(|\\{|<<)(\\S+)$");
+
+	//match a word in single quotes. closing quote is optional, ex: 'VAR' 'VAR 'x' 'x
 	std::regex explicit_symbol_rgx("^'[a-zA-Z]+'?$");
+
 	std::regex unsigned_int_rgx("^[0-9]+$");
 
 	Node * collect_cmd_ops (Node * n, Stack & stack)
 	{
 		HangingOpenDelim d = stack.get_next_hanging_open_delim();
+		//if the next hanging delim on the stack is a paren, do this:
 		if (d.d_type == DELIM_OPEN_PAREN)
 		{
 			stack.take_at(d.level)->set_type(TYPE_DELETABLE);
@@ -30,10 +40,16 @@ namespace Parser
 				prev_op = current_op;
 				--i;
 			}
+		//otherwise, do this:
 		} else {
-			for (unsigned int i = 1; i != 3; ++i)
-				{ if (stack.get_level_ref(i)->data.type == TYPE_DELIM) { return nullptr; } }
+			//quit if the stack is too shallow
 			if (stack.depth() < 2) { return n; }
+			//quit if the top two levels are an improper type
+			for (unsigned int i = 1; i < 3; ++i)
+			{
+				if (stack.get_level_ref(i)->data.type == TYPE_DELIM) { return nullptr; }
+			}
+			//if we haven't quit yet, we string the two top levels together, and pop them from the stack
 			n->links.down = stack.get_level_ref(2);
 			n->links.down->links.next = stack.take();
 			stack.take();
@@ -68,13 +84,14 @@ namespace Parser
 	errorMessage parse_word_to(const string & s, Stack & stack)
 	{
 		errorMessage msg { STATUS_OK, s };
+
 		if (s == "eval")
 		{
 			stack.eval();
 			return msg;
 		}
 
-		if(regex_match(s,numeric_rgx))
+		if (regex_match(s, numeric_rgx))
 		{
 			stack.push_new()->set_numeric(new numeric {s.c_str()});
 			return msg;
@@ -87,9 +104,22 @@ namespace Parser
 			msg.status = STATUS_EXIT;
 			return msg;
 		}
-		if(regex_match(s,cmd_rgx))
+		if (regex_match(s, cmd_rgx))
 		{
 			if(!parse_native_cmd_to(s, stack)) { msg.status = STATUS_UNKNOWN_TOKEN; }
+			return msg;
+		}
+		if (regex_match(s, stuck_delim_rgx))
+		{
+			std::smatch m;
+			regex_search(s, m, stuck_delim_rgx);
+			for (size_t i = 1; i < m.size(); ++i)
+			{
+				//iterate over each capture in stuck_delim_rgx
+				msg = parse_word_to(m[i].str(), stack); 
+				//if any of them error, give up immediately
+				if (!msg) { return msg; }
+			}
 			return msg;
 		}
 		if (regex_match(s, open_delim_rgx))

@@ -80,7 +80,7 @@ public:
 	Node * eval(NodeContainer * c);
 };
 
-// I'm kind of pround of this. It's a container of nodes linked in a tree, but the empty nodees are all forward linked to eachother;
+// I'm kind of proud of this. It's a container of nodes linked in a tree, but the empty nodes are all forward linked to each other;
 // making it a very fast operation to find an empty node, or delete a node.
 // A key feature is that it makes the last empty node a 'cut card', like in a shoe blackjack game.
 // When the cut card is reached, the deck is reshuffled. In this case, the cut card indicates that every node following is empty.

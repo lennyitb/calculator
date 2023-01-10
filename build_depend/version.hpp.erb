@@ -1,25 +1,29 @@
 <%
 
-	# this file will incriment the build number in version.json whenever it's run
-    # the inc_version recipe in the makefile runs this
+	# this file will incriment the build number in version.json whenever it's compiled
+    # the inc_version recipe in the makefile overwrites include/version.hpp with this erb output
+	# whenever a source file is recompiled
 
-	load 'build_depend/version_script.rb'
-
+	require_relative 'version_script'
 	$version_info = VersionInfo.new 'version.json'
 	$header_info_comment_box = CommentBox.new $version_info.header_info
+
+	$stream_version_info_fn = true
 
 %>
 <%= $header_info_comment_box %>
 
 <%= $version_info.header_guard %>
-<% $version_info.each do |key, value|
+<%
+# iterate over every keypair in version.json['defines']
+$version_info.each do |key, value|
 	%>#define <%= key.justify %>  <%= value %>
 <% end
-%>
-inline void stream_version_info(std::ostream& stream)
+%><% if $stream_version_info_fn %>
+inline void stream_version_info(std::ostream & stream)
 {
 	stream << FULL_NAME << " " << VERSION_STR << " build " << BUILD_NUM << std::endl;
 }
-<% if $version_info.header_guard %>
+<% end %><% if $version_info.header_guard %>
 #endif
 <% end %>
