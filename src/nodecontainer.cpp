@@ -92,6 +92,7 @@ Node * Node::set_delim(const string & delim)
 	return this;
 }
 Node * Node::set_symbol(const string & name)
+//get rid of this. it's wrong. symbols are now managed by symboltable in stack or maybe runtime
 {
 	data.type = TYPE_SYMBOL;
 	data.data = new symbol;
@@ -189,7 +190,7 @@ Node * Node::inject_to(Node * result)
 //current headache is that result isn't being set to the first operand
 //i need to find a way to set result to the first element evaluation
 {
-	// if it's not a command it's a leaf, and is considered aleady evaluated
+	// if it's not a command it's a leaf, and is considered already evaluated
 	// but it needs to be copied into result for memory management
 	if (data.type!=TYPE_CMD || links.down == nullptr)
 	{
@@ -213,7 +214,7 @@ Node * Node::inject_to(Node * result)
 		} else {
 			inject_fn(result, next_op, data.cmd_symbol);
 		}
-	} 
+	}
 	return result;
 }
 
@@ -228,7 +229,7 @@ Node * Node::new_inject_to (Node * result)
 	}
 	nodeDataType result_type { get_eval_type() };
 	result->set_type(result_type);
-	// go down and walk over every next to see if there's a command 
+	// go down and walk over every next to see if there's a command
 	// set result to down->inject_to()
 	Node * next_op { links.down };
 	next_op->inject_to(result);
@@ -250,7 +251,7 @@ nodeDataType Node::get_eval_type()
 	if (!links.down) { return data.type; }
 	nodeDataType down_type { links.down->get_eval_type() };
 	nodeDataType next_type;
-	if (links.next) { next_type = links.next->get_eval_type(); } else { next_type = TYPE_EMPTY; } 
+	if (links.next) { next_type = links.next->get_eval_type(); } else { next_type = TYPE_EMPTY; }
 
 	if (compare_types_to(TYPE_ERROR, data.type, down_type, next_type)) { return TYPE_ERROR; }
 	// multiple symbols should return an ex
@@ -264,7 +265,7 @@ nodeDataType Node::get_eval_type()
 
 	return TYPE_ERROR;
 }
-// depricated
+// deprecated
 Node * Node::eval(NodeContainer * c)
 {
 	if (data.type != TYPE_CMD || links.down == nullptr) { return this; }
@@ -281,7 +282,7 @@ NodeContainer::~NodeContainer()
 	// for (Node * i = container; i < container + container_size; ++i)
 	// {
 	// 	if (i->get_type() == TYPE_CUTCARD) { break; } //assume there will be no data after the cutcard is encountered
-	// 	i->mark_empty_delete_data(); //it's actually unneccesary to mark the nodes empty but I don't have a method to only delete the data
+	// 	i->mark_empty_delete_data(); //it's actually unnecessary to mark the nodes empty but I don't have a method to only delete the data
 	// }
 
 	// //finally free the container itself

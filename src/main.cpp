@@ -1,3 +1,16 @@
+
+
+  /*><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>X
+  $!                                                                                  $!
+  !$                                Lenny's Calculator                                !$
+  $!                                                                                  $!
+  !$    Made by Lenny with the GiNaC library (GPL)                                    !$
+  $!    all original code in this repo falls under MIT Licence                        $!
+  !$    (Copyright (c) Leonard H. Phelan IV 2023)                                     !$
+  $!                                                                                  $!
+  X<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><*/
+
+
 #include "calc.hpp"
 
 namespace Version {
@@ -6,6 +19,17 @@ namespace Version {
 
 using namespace std;
 using namespace Parser;
+
+void print_stack(Stack & s)
+{
+//print each level of the stack, starting at the top
+	for (unsigned int i = s.depth(); i > 0; --i)
+	{
+		if (i < 10) { cout << ' '; }
+		cout << i << ": " << s.get_level_ref(i)->get_data_str();
+		cout << endl;
+	}
+}
 
 /// The main function.
 int main()
@@ -35,17 +59,12 @@ int main()
 		{
 			cout << endl;
 			if (msg.status == STATUS_EXIT) { cout << "exit signal...  "; break; }
+			else if (msg.status == STATUS_PRINT_STACK) { print_stack(s); }
 			else { cout << "error- unknown token: " << msg.get_message() << endl; }
 	//case for no error on input
 		} else {
 			cout << '\n';
-	//print each level of the stack, starting at the top
-			for (unsigned int i = s.depth(); i > 0; --i)
-			{
-				if (i < 10) { cout << ' '; }
-				cout << i << ": " << s.get_level_ref(i)->get_data_str();
-				cout << endl;
-			}
+			print_stack(s);
 		}
 	//and don't forget to thank our guests
 		#ifdef POLITE

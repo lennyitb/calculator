@@ -99,6 +99,7 @@ namespace Parser
 		if (s == "swap") { if (stack.swap()) { return msg; } else { msg.status = STATUS_UNKNOWN_ERROR; return msg; } }
 		if (s == "drop") { if (stack.drop()) { return msg; } else { msg.status = STATUS_UNKNOWN_ERROR; return msg; } }
 		if (s == "rolln") { if (stack.rolln()) { return msg; } else { msg.status = STATUS_UNKNOWN_ERROR; return msg; } }
+		if (s == "s") { msg.status = STATUS_PRINT_STACK; return msg; }
 		if (s == "exit")
 		{
 			msg.status = STATUS_EXIT;
@@ -106,7 +107,13 @@ namespace Parser
 		}
 		if (regex_match(s, cmd_rgx))
 		{
+			//TODO fall through if no command matches and parse as a symbol instead
 			if(!parse_native_cmd_to(s, stack)) { msg.status = STATUS_UNKNOWN_TOKEN; }
+			return msg;
+		}
+		if (regex_match(s, explicit_symbol_rgx))
+		{
+			stack.push_new()->set_symbol(s);
 			return msg;
 		}
 		if (regex_match(s, stuck_delim_rgx))
@@ -140,6 +147,9 @@ namespace Parser
 			result = parse_word_to(s, stack);
 			if (!result)
 				{ return result; }
+			//get rid of trailing whitespace before deciding whether to continue
+			while (is.peek() == ' ')
+				{ is.get(); }
 		} while (is.peek() != PARSE_EOF);
 		return result;
 	}

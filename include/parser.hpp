@@ -6,6 +6,7 @@ namespace Parser
 	enum errorStatus
 	{
 		STATUS_OK,
+		STATUS_PRINT_STACK,
 		STATUS_EXIT,
 		STATUS_UNKNOWN_TOKEN,
 		STATUS_UNKNOWN_ERROR

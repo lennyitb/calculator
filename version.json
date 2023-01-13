@@ -1,6 +1,6 @@
 {
-  "json_info": [
-    "THIS file is meant to be modified, although it does carry a second warning message which is used by the script"
+  "this_json_info": [
+    "THIS file is meant to be modified, the warning message below is inserted to version.hpp"
   ],
   "header_info": [
     "Version increment script- generated file",
@@ -9,11 +9,11 @@
   ],
   "defines": {
     "FULL_NAME": "Lenny's Calculator",
-    "BUILD_NUM": "00326",
+    "BUILD_NUM": "00345",
     "VERSION_MAJOR": 0,
     "VERSION_MINOR": 1,
     "VERSION_STR": "0.01",
-    "BUILD_DATE": "2023-01-10",
+    "BUILD_DATE": "2023-01-11",
     "ZERO_MODIFY_WHOLE_STACK": "",
     "POLITE": ""
   },

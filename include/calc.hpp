@@ -1,4 +1,6 @@
 
+// this is the universal header file. to adapt my program, you should simply have to include this file (and of course link all the source files)
+// i've identified 5 or 6 moving parts, as well as a couple of important defines, which are all included in order below.
 
 
 /**************************************\

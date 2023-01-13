@@ -116,9 +116,11 @@ cunt Stack::get_cunt()
 		// // I want to have this ifdef directive but I would need to include version.hpp here
 		// // which i don't really wanna do because it would slow down compilation
 		// #ifdef ZERO_MODIFY_WHOLE_STACK
-			if (num == 0) { return depth(); }
+		cunt current_depth {depth() - 1};
+		if (num == 0) { return current_depth; }
+		if (num > current_depth) { return current_depth; }
 		// #endif
-		return num;
+		return num - 1;
 	}
 	return 0;
 }

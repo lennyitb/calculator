@@ -3,29 +3,29 @@
 
 ## Written by: Lenny
 
-It's been a while since anyone has built a good calculator.
+It's been a while since anyone has built a good calculator. Huge shoutout to the GiNaC folks, and by extension CLN, MPFR, and GMP; The free big number libraries I'm leaning into for this. This is essentially just a runtime interpreter for these libraries.
 
-The code is a little hack but I'm aiming for very high performance. It's written in 100% C++11. I started this project in C a number of months ago and got a good way into it before I gave up and decided that I need polymorphism. I didn't know a solitary lick of C++ at the time, but I've been learning it since then and I'm pretty happy with the result. I'm still learning, but I'm pretty happy with the result so far.
+The code is a little hack but I'm aiming for very high performance. It's written in 100% C++11. I started this project in C a number of months ago and got a good way into it before I gave up and decided that I need polymorphism. I didn't know a solitary lick of C++ at the time, but I've been learning it since then. I'm still learning, but I'm pretty happy with the result so far.
 
-It's mostly based on the idea of algebraic expressions being broken down into a tree, which is stored in a special container I devised. I'm a little new to this, but I'm pretty sure it was necessary to roll my own— and I'm honestly proud of the outcome. The key feature here is that the empty Nodes are all linked together, making it super fast to construct and delete Nodes.
+Conceptually, I'm just breaking algebraic expressions down into trees, which are stored in a special container I devised. I'm a little new to this, but I'm pretty sure it was necessary to roll my own— and I'm honestly proud of the outcome. The key feature here is that the empty Nodes are all linked together, making it super fast to construct and delete Nodes.
 
 When nodes are no longer needed, they're marked as 'deletable' and kept track of on the undo table. if the memory fills up, the oldest nodes will then be deleted fully and made available for reallocation.
 
 this is supposed to be a portable simple thing that takes most RPL commands for input, maybe I'm changing the syntax a little bit here and there.
 
-    1 2 plus 3 plus
-      >> plus(plus(1, 2), 3)
+  1 2 plus 3 plus
+    >> plus(plus(1, 2), 3)
 
-    eval
-      >> 6
+  eval
+    >> 6
 
 A neat feature for instance is that a 'hanging delimiter' is allowed to exist alone on the stack, which can later be closed to form a list or specify the number of arguments in a command.
 
-    ( 1 2 3 4 5 6 times
-      >> times(1, 2, 3, 4, 5, 6)
+  ( 1 2 3 4 5 6 times
+    >> times(1, 2, 3, 4, 5, 6)
 
-    eval
-      >> 720
+  eval
+    >> 720
 
 It's meant to ultimately be a very simple API with some sort of user interface built around it; either a webpage, mobile app or even a real-life calculator. In the future, the parser may support configuration commands to do things like output levels of the stack with JSON, or LaTeX.
 
@@ -88,6 +88,7 @@ When nodes are collapsing in an evaluation, this is the hierarchy that the resul
 - [ ] add make targets for web assembly and embedded compilation. Also build GiNaC from source.
 - [ ] ability to save definitions (like the 50g 'filesystem') and write that to file or export as json to front end
 - [ ] don't quit without saving changes??
+- [ ] ability to format output or just a specific expression/node as scientific, float, etc...
 
 ## Current Known Bugs
 

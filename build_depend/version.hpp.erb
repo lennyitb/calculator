@@ -20,6 +20,9 @@ $version_info.each do |key, value|
 	%>#define <%= key.justify %>  <%= value %>
 <% end
 %><% if $stream_version_info_fn %>
+// it's not guarenteed that iostream will be present at this point
+#include <iostream>
+
 inline void stream_version_info(std::ostream & stream)
 {
 	stream << FULL_NAME << " " << VERSION_STR << " build " << BUILD_NUM << std::endl;
