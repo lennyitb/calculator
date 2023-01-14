@@ -11,6 +11,7 @@ namespace Parser
 		STATUS_UNKNOWN_TOKEN,
 		STATUS_UNKNOWN_ERROR
 	};
+
 	class errorMessage
 	{
 	public:
